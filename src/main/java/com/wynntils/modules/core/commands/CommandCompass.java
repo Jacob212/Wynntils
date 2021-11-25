@@ -86,7 +86,7 @@ public class CommandCompass extends CommandBase implements IClientCommand {
                 CompassManager.reset();
 
                 StringTextComponent text = new StringTextComponent("The beacon and icon of your desired coordinates have been cleared.");
-                text.getStyle().setColor(TextFormatting.GREEN);
+                text.getStyle().withColor(TextFormatting.GREEN);
                 sender.sendMessage(text);
                 return;
             }
@@ -139,7 +139,7 @@ public class CommandCompass extends CommandBase implements IClientCommand {
                 default:
                     if (newPos[1] == 0) {
                         StringTextComponent text = new StringTextComponent("That wasn't supposed to happen!");
-                        text.getStyle().setColor(TextFormatting.DARK_RED);
+                        text.getStyle().withColor(TextFormatting.DARK_RED);
                         sender.sendMessage(text);
                     }
                     break;
@@ -182,11 +182,11 @@ public class CommandCompass extends CommandBase implements IClientCommand {
 
             dir = dir.substring(0, 1).toUpperCase() + dir.substring(1);
             StringTextComponent text = new StringTextComponent("");
-            text.getStyle().setColor(TextFormatting.GREEN);
+            text.getStyle().withColor(TextFormatting.GREEN);
             text.appendText("Compass is now pointing towards ");
 
             StringTextComponent directionText = new StringTextComponent(dir);
-            directionText.getStyle().setColor(TextFormatting.DARK_GREEN);
+            directionText.getStyle().withColor(TextFormatting.DARK_GREEN);
             text.appendSibling(directionText);
 
             text.appendText(".");
@@ -256,17 +256,17 @@ public class CommandCompass extends CommandBase implements IClientCommand {
                 CompassManager.setCompassLocation(new Location(x, 0, z));
 
                 StringTextComponent text = new StringTextComponent("");
-                text.getStyle().setColor(TextFormatting.GREEN);
+                text.getStyle().withColor(TextFormatting.GREEN);
                 text.appendText("Compass is now pointing towards (");
 
                 StringTextComponent xCoordinateText = new StringTextComponent(Integer.toString(x));
-                xCoordinateText.getStyle().setColor(TextFormatting.DARK_GREEN);
+                xCoordinateText.getStyle().withColor(TextFormatting.DARK_GREEN);
                 text.appendSibling(xCoordinateText);
 
                 text.appendText(", ");
 
                 StringTextComponent zCoordinateText = new StringTextComponent(Integer.toString(z));
-                zCoordinateText.getStyle().setColor(TextFormatting.DARK_GREEN);
+                zCoordinateText.getStyle().withColor(TextFormatting.DARK_GREEN);
                 text.appendSibling(zCoordinateText);
 
                 text.appendText(").");

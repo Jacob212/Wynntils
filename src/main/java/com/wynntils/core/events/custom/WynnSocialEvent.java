@@ -8,7 +8,7 @@ import com.wynntils.McIf;
 import com.wynntils.core.framework.instances.PlayerInfo;
 import com.wynntils.core.framework.instances.containers.PartyContainer;
 import com.wynntils.core.framework.instances.data.SocialData;
-import net.minecraft.client.Minecraft;
+
 import net.minecraftforge.eventbus.api.Event;
 
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.Set;
  */
 public class WynnSocialEvent extends Event {
 
-    String member;
+	String member;
 
     public WynnSocialEvent(String member) {
         this.member = member;

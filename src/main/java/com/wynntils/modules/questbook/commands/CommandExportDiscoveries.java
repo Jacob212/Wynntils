@@ -16,7 +16,6 @@ import com.wynntils.modules.questbook.instances.DiscoveryInfo;
 import com.wynntils.modules.questbook.managers.QuestManager;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -24,6 +23,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.client.IClientCommand;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import com.wynntils.transition.ICommand;
+import com.wynntils.transition.ICommandSender;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,7 +34,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class CommandExportDiscoveries extends CommandBase implements IClientCommand {
+public class CommandExportDiscoveries extends CommandBase implements ICommand {
 
     private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 
@@ -55,7 +56,7 @@ public class CommandExportDiscoveries extends CommandBase implements IClientComm
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         ITextComponent command = new StringTextComponent("/exportdiscoveries");
-        command.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/exportdiscoveries"));
+        command.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/exportdiscoveries"));
 
         if (!Reference.onWorld)
             throw new CommandException("You need to be in a Wynncraft world to run %s", command);
@@ -122,7 +123,7 @@ public class CommandExportDiscoveries extends CommandBase implements IClientComm
             }
             ITextComponent text = new StringTextComponent("Exported discoveries to ");
             ITextComponent fileText = new StringTextComponent(exportFile.getName());
-            fileText.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, exportFile.getCanonicalPath()));
+            fileText.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, exportFile.getCanonicalPath()));
             fileText.getStyle().setUnderlined(true);
             text.appendSibling(fileText);
             McIf.mc().submit(() -> McIf.sendMessage(text));

@@ -1,5 +1,5 @@
 /*
- *  * Copyright © Wynntils - 2018 - 2021.
+ *  * Copyright Â© Wynntils - 2018 - 2021.
  */
 
 package com.wynntils.modules.chat.language;
@@ -16,16 +16,16 @@ public interface WynncraftLanguage {
 
     public static final WynncraftLanguage NORMAL = (string, character) -> new Pair<>(string, character);
     public static final WynncraftLanguage WYNNIC = (string, character) -> {
-        if ('a' <= character && character <= 'z') {
+    	if ('a' <= character && character <= 'z') {
             character = (char) ((character) + 0x243B);
         } else if ('A' <= character && character <= 'Z') {
             character = (char) ((character) + 0x245B);
         } else if (character == '.') {
-            character = '０';
+        	character = '０';
         } else if (character == '!') {
-            character = '１';
+        	character = '１';
         } else if (character == '?') {
-            character = '２';
+        	character = '２';
         } else if ('0' <= character && character <= '9') {
             Matcher matcher = WYNNIC_NUMBERS.matcher(string);
             matcher.find();
@@ -67,15 +67,15 @@ public interface WynncraftLanguage {
                 string += (char) (number + 0x2473);
             } else if (number == 10 || number == 50 || number == 100) {
                 switch (number) {
-                    case 10:
-                        string += '⑽';
-                        break;
-                    case 50:
-                        string += '⑾';
-                        break;
-                    case 100:
-                        string += '⑿';
-                        break;
+	                case 10:
+	                    string += '⑽';
+	                    break;
+	                case 50:
+	                    string += '⑾';
+	                    break;
+	                case 100:
+	                    string += '⑿';
+	                    break;
                 }
             } else if (1 <= number && number <= 399) {
                 StringBuilder newNumber = new StringBuilder(string);

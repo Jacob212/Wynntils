@@ -131,7 +131,7 @@ public class ChangelogUI extends Screen {
 
         float scrollPositionOffset = scrollbarSize == 118 ? 0 : (((changelogContent.size() / 15.0f) * 159) * scrollPercent);
         for (String changelogLine : changelogContent) {
-            renderer.drawString(changelogLine.replace("%user%", McIf.mc().getSession().getUsername()), textX, baseY - scrollPositionOffset, CommonColors.BROWN, SmartFontRenderer.TextAlignment.LEFT_RIGHT, SmartFontRenderer.TextShadow.NONE);
+            renderer.drawString(changelogLine.replace("%user%", McIf.mc().getUser().getName()), textX, baseY - scrollPositionOffset, CommonColors.BROWN, SmartFontRenderer.TextAlignment.LEFT_RIGHT, SmartFontRenderer.TextShadow.NONE);
 
             baseY += 10;
         }

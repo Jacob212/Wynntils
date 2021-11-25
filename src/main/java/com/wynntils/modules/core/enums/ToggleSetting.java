@@ -75,36 +75,36 @@ public enum ToggleSetting {
         StringTextComponent base = new StringTextComponent(
                 "Wynntils automatically "
         );
-        base.getStyle().setColor(TextFormatting.GRAY);
+        base.getStyle().withColor(TextFormatting.GRAY);
 
         StringTextComponent status = new StringTextComponent(function);
-        status.getStyle().setColor(TextFormatting.WHITE);
-        base.appendSibling(status);
+        status.getStyle().withColor(TextFormatting.WHITE);
+        base.append(status);
 
         StringTextComponent continuation = new StringTextComponent(" Wynncraft toggle option ");
-        continuation.getStyle().setColor(TextFormatting.GRAY);
-        base.appendSibling(continuation);
+        continuation.getStyle().withColor(TextFormatting.GRAY);
+        base.append(continuation);
 
         StringTextComponent toggle = new StringTextComponent(name);
-        toggle.getStyle().setColor(TextFormatting.WHITE);
-        base.appendSibling(toggle);
+        toggle.getStyle().withColor(TextFormatting.WHITE);
+        base.append(toggle);
 
         StringTextComponent back = new StringTextComponent(" (mostly likely for conflict issues).\nTo " + callback + " it again type ");
-        back.getStyle().setColor(TextFormatting.GRAY);
-        base.appendSibling(back);
+        back.getStyle().withColor(TextFormatting.GRAY);
+        base.append(back);
 
         StringTextComponent backCommand = new StringTextComponent("/toggle " + name);
-        backCommand.getStyle().setColor(TextFormatting.WHITE);
+        backCommand.getStyle().withColor(TextFormatting.WHITE);
         backCommand.getStyle().setUnderlined(true);
-        backCommand.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/toggle " + name));
-        backCommand.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+        backCommand.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/toggle " + name));
+        backCommand.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new StringTextComponent("Click to run /toggle " + name))
         );
-        base.appendSibling(backCommand);
+        base.append(backCommand);
 
         StringTextComponent end = new StringTextComponent(".\n");
-        end.getStyle().setColor(TextFormatting.GRAY);
-        base.appendSibling(end);
+        end.getStyle().withColor(TextFormatting.GRAY);
+        base.append(end);
 
         return base;
     }

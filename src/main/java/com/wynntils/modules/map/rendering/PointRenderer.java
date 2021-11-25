@@ -40,7 +40,7 @@ public class PointRenderer {
 
     public static void drawTexturedLines(Texture texture, Long2ObjectMap<List<List<LootRunPath.LootRunPathLocation>>> points, Long2ObjectMap<List<List<Vector3d>>> directions, CustomColor color, float width) {
         List<ChunkPos> chunks = new ArrayList<>();
-        int renderDistance = McIf.mc().options.renderDistanceChunks;
+        int renderDistance = McIf.mc().options.renderDistance;
         for (int x = -renderDistance; x <= renderDistance; x++) {
             for (int z = -renderDistance; z <= renderDistance; z++) {
                 int playerChunkX = McIf.player().xChunk;
@@ -57,7 +57,7 @@ public class PointRenderer {
         texture.bind();
 
         for (ChunkPos chunk : chunks) {
-            if (!McIf.world().isChunkGeneratedAt(chunk.x, chunk.z)) {
+            if (!McIf.world().hasChunk(chunk.x, chunk.z)) {
                 continue;
             }
             List<List<LootRunPath.LootRunPathLocation>> pointsInChunk = points.get(ChunkPos.asLong(chunk.x, chunk.z));
@@ -80,7 +80,7 @@ public class PointRenderer {
                             BlockState blockStateInArea = world.getBlockState(blockInArea);
                             if (blockStateInArea.getBlock() == Blocks.BARRIER) {
                                 barrier = true;
-                            } else if (blockStateInArea.getCollisionBoundingBox(world, blockInArea) != null) {
+                            } else if (blockStateInArea.getCollisionShape(world, blockInArea) != null) {
                                 validBlock = true;
                             }
 
@@ -132,7 +132,7 @@ public class PointRenderer {
                         BlockPos endBlockPos = new BlockPos(end.x, end.y, end.z);
                         net.minecraft.util.math.vector.Vector3d endVec = new net.minecraft.util.math.vector.Vector3d(end.x, end.y, end.z);
 
-                        AxisAlignedBB startCollisionBox = world.getBlockState(startBlockPos).getCollisionBoundingBox(world, startBlockPos);
+                        AxisAlignedBB startCollisionBox = world.getBlockState(startBlockPos).getCollisionShape(world, startBlockPos);
                         if (startCollisionBox != Block.NULL_AABB) {
                             AxisAlignedBB offsetStartCollisionBox = startCollisionBox.offset(startBlockPos);
                             if (offsetStartCollisionBox.contains(startVec)) {
@@ -252,7 +252,7 @@ public class PointRenderer {
         if (locations.isEmpty()) return;
 
         List<ChunkPos> chunks = new ArrayList<>();
-        int renderDistance = McIf.mc().options.renderDistanceChunks;
+        int renderDistance = McIf.mc().options.renderDistance;
         for (int x = -renderDistance; x <= renderDistance; x++) {
             for (int z = -renderDistance; z <= renderDistance; z++) {
                 int playerChunkX = McIf.player().xChunk;
@@ -278,7 +278,7 @@ public class PointRenderer {
 
         {
             for (ChunkPos chunkPos : chunks) {
-                if (!McIf.world().isChunkGeneratedAt(chunkPos.x, chunkPos.z)) {
+                if (!McIf.world().hasChunk(chunkPos.x, chunkPos.z)) {
                     continue;
                 }
                 List<List<LootRunPath.LootRunPathLocation>> locationsInChunk = locations.get(ChunkPos.asLong(chunkPos.x, chunkPos.z));

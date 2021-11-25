@@ -11,9 +11,9 @@ import com.wynntils.core.utils.objects.SquareRegion;
 import com.wynntils.modules.visual.configs.VisualConfig;
 import com.wynntils.modules.visual.entities.EntitySnowFlake;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.init.Biomes;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 
 import java.util.Random;
 
@@ -32,7 +32,7 @@ public class SnowFlakesSpawnCondition implements EntitySpawnCodition {
         // nesaak is TAIGA and lusuco is PLAINS
         boolean nesaak = NESAAK.isInside(pos);
         if (!nesaak && !LUSUCO.isInside(pos)) return false;
-        if (biome != (nesaak ? Biomes.TAIGA : Biomes.PLAINS)) return false;
+        if (biome.toString() != (nesaak ? Biomes.TAIGA.toString() : Biomes.PLAINS.toString())) return false;//this should be changed.
 
         // max distance
         double yDistance = Math.abs(pos.clone().subtract(new Location(player)).getY());

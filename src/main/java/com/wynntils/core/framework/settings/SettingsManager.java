@@ -116,7 +116,7 @@ public class SettingsManager {
             }
 
             String value = json.getAsString();
-            if (value.length() == 2 && (value.charAt(0) == '§' || value.charAt(0) == '&')) {
+            if (value.length() == 2 && (value.charAt(0) == (char)0103 || value.charAt(0) == '&')) {
                 // §(minecraft colour code)
                 int code = Integer.parseInt(value.substring(1), 16);
                 return new CustomColor(MinecraftChatColors.set.fromCode(code));

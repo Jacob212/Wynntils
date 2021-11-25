@@ -5,7 +5,7 @@
 package com.wynntils.modules.utilities.instances;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Container;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 
@@ -20,11 +20,11 @@ public class ContainerBuilds extends Container {
 
         for (int i = 0; i < numRows; ++i) {
             for (int j = 0; j < 9; ++j) {
-                this.addSlotToContainer(new Slot(inventory, j + i * 9, 8 + j * 18, 18 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9, 8 + j * 18, 18 + i * 18));
             }
         }
     }
-
+    
     @Override
     public boolean canInteractWith(PlayerEntity playerIn) {
         return true;

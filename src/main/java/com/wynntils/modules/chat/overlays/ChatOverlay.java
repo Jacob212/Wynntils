@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ChatOverlay extends GuiNewChat {
+public class ChatOverlay extends NewChatGui {
 
     public static final int WYNN_DIALOGUE_ID = "wynn_dialogue".hashCode();
 
@@ -76,7 +76,7 @@ public class ChatOverlay extends GuiNewChat {
                 ChatLine chatline = getCurrentTab().getCurrentMessages().get(i1 + scrollPos);
 
                 if (chatline != null) {
-                    int j1 = updateCounter - chatline.getUpdatedCounter();
+                    int j1 = updateCounter - chatline.getAddedTime();
 
                     if (j1 < 200 || flag) {
                         double d0 = (double)j1 / 200.0D;
@@ -96,7 +96,7 @@ public class ChatOverlay extends GuiNewChat {
                         if (l1 > 3) {
                             int j2 = -i1 * 9;
                             if (!ChatConfig.INSTANCE.transparent) {
-                                drawRect(-2, j2 - 9, extraY, j2, l1 / 2 << 24);
+                                drawRect(-2, j2 - 9, extraY, j2, l1 / 2 << 24);//is this needed anymore?
                             }
                             String s = McIf.getFormattedText(ChatManager.renderMessage(chatline.getMessage()));
                             GlStateManager.enableBlend();

@@ -7,7 +7,6 @@ package com.wynntils.core.framework.instances.containers;
 import com.wynntils.McIf;
 import com.wynntils.core.events.custom.WynnSocialEvent;
 import com.wynntils.core.framework.FrameworkManager;
-import net.minecraft.client.Minecraft;
 
 import java.util.HashSet;
 import java.util.List;
@@ -78,7 +77,7 @@ public class PartyContainer {
     public void removeMembers(List<String> members) {
         members.forEach(userName -> FrameworkManager.getEventBus().post(new WynnSocialEvent.Party.Leave(userName)));
 
-        if (members.contains(McIf.player().getName())) {
+        if (members.contains(McIf.player().getName().getString())) {
             partyMembers.clear();
             owner = "";
             return;

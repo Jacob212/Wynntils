@@ -64,12 +64,12 @@ public class TextAction {
     }
 
     public static <T extends ITextComponent> T withStaticEvent(T text, Class<? extends Runnable> clazz) {
-        text.getStyle().setClickEvent(getStaticEvent(clazz));
+        text.getStyle().withClickEvent(getStaticEvent(clazz));
         return text;
     }
 
     public static <T extends ITextComponent> T withDynamicEvent(T text, Runnable action) {
-        text.getStyle().setClickEvent(getDynamicEvent(action));
+        text.getStyle().withClickEvent(getDynamicEvent(action));
         return text;
     }
 

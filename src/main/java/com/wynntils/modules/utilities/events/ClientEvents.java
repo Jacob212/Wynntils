@@ -63,7 +63,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 
@@ -123,7 +123,7 @@ public class ClientEvents implements Listener {
     @SubscribeEvent
     public void classDialog(GuiOverlapEvent.ChestOverlap.DrawGuiContainerBackgroundLayer e) {
         if (!McIf.toText(e.getGui().getTitle()).contains("Select a Class")) return;
-        if (!afkProtectionActivated) return
+        if (!afkProtectionActivated) return;
 
         if (McIf.toText(e.getGui().getTitle()).contains("AFK Protection activated")) return;
         Inventory inv = (Inventory) e.getGui().getLowerInv();
@@ -351,7 +351,7 @@ public class ClientEvents implements Listener {
     }
 
     @SubscribeEvent
-    public void changeNametagColors(RenderLivingEvent.Specials.Pre e) {
+    public void changeNametagColors(RenderLivingEvent.Pre e) {
         if (NametagManager.checkForNametags(e)) e.setCanceled(true);
     }
 
@@ -489,7 +489,7 @@ public class ClientEvents implements Listener {
         if (!Reference.onWorld) return;
 
         if (UtilitiesConfig.INSTANCE.preventMythicChestClose) {
-            if (e.getKeyCode() == 1 || e.getKeyCode() == McIf.mc().options.keyBindInventory.getKey().getValue()) {
+            if (e.getKeyCode() == 1 || e.getKeyCode() == McIf.mc().options.keyInventory.getKey().getValue()) {
                 IInventory inv = e.getGui().getLowerInv();
                 if (McIf.getUnformattedText(inv.getDisplayName()).contains("Loot Chest") ||
                         McIf.getUnformattedText(inv.getDisplayName()).contains("Daily Rewards") ||
@@ -501,7 +501,7 @@ public class ClientEvents implements Listener {
                             !ItemUtils.getStringLore(stack).toLowerCase().contains("mythic")) continue;
 
                         StringTextComponent text = new StringTextComponent("You cannot close this loot chest while there is a mythic in it!");
-                        text.getStyle().setColor(TextFormatting.RED);
+                        text.getStyle().withColor(TextFormatting.RED);
 
                         McIf.sendMessage(text);
                         McIf.mc().getSoundManager().play(SimpleSound.forUI(SoundEvents.NOTE_BLOCK_BASS, 1f));
@@ -564,7 +564,7 @@ public class ClientEvents implements Listener {
         if(!Reference.onWorld) return;
 
         if (UtilitiesConfig.INSTANCE.preventSlotClicking && e.getGui().getSlotUnderMouse() != null && e.getGui().getSlotUnderMouse().container == McIf.player().inventory) {
-            if (checkDropState(e.getGui().getSlotUnderMouse().getSlotIndex(), McIf.mc().options.keyBindDrop.getKey().getValue())) {
+            if (checkDropState(e.getGui().getSlotUnderMouse().getSlotIndex(), McIf.mc().options.keyDrop.getKey().getValue())) {
                 e.setCanceled(true);
                 return;
             }
@@ -641,7 +641,7 @@ public class ClientEvents implements Listener {
         InventoryReplacer gui = (InventoryReplacer) McIf.mc().screen;
 
         // no item picked up
-        if (McIf.player().inventory.getItemStack().isEmpty()) return;
+        if (McIf.player().inventory.isEmpty()) return;
 
         // destination slot was filled in the meantime
         if (gui.getMenu().getSlot(accessoryDestinationSlot).hasItem() &&
@@ -661,9 +661,9 @@ public class ClientEvents implements Listener {
     public void clickOnChest(GuiOverlapEvent.ChestOverlap.HandleMouseClick e) {
         if (UtilitiesConfig.INSTANCE.preventSlotClicking && e.getSlotIn() != null) {
             if (e.getSlotId() - e.getGui().getLowerInv().getContainerSize() >= 0 && e.getSlotId() - e.getGui().getLowerInv().getContainerSize() < 27) {
-                e.setCanceled(checkDropState(e.getSlotId() - e.getGui().getLowerInv().getContainerSize() + 9, McIf.mc().options.keyBindDrop.getKey().getValue()));
+                e.setCanceled(checkDropState(e.getSlotId() - e.getGui().getLowerInv().getContainerSize() + 9, McIf.mc().options.keyDrop.getKey().getValue()));
             } else {
-                e.setCanceled(checkDropState(e.getSlotId() - e.getGui().getLowerInv().getContainerSize() - 27, McIf.mc().options.keyBindDrop.getKey().getValue()));
+                e.setCanceled(checkDropState(e.getSlotId() - e.getGui().getLowerInv().getContainerSize() - 27, McIf.mc().options.keyDrop.getKey().getValue()));
             }
         }
 
@@ -724,7 +724,7 @@ public class ClientEvents implements Listener {
     @SubscribeEvent
     public void clickOnHorse(GuiOverlapEvent.HorseOverlap.HandleMouseClick e) {
         if (UtilitiesConfig.INSTANCE.preventSlotClicking && e.getGui().getSlotUnderMouse() != null) {
-            e.setCanceled(checkDropState(e.getGui().getSlotUnderMouse().getSlotIndex(), McIf.mc().options.keyBindDrop.getKey().getValue()));
+            e.setCanceled(checkDropState(e.getGui().getSlotUnderMouse().getSlotIndex(), McIf.mc().options.keyDrop.getKey().getValue()));
         }
     }
 
@@ -758,7 +758,7 @@ public class ClientEvents implements Listener {
             return;
         }
 
-        if (oldStack.isEmpty() || !newStack.isEmpty() && !oldStack.isItemEqual(newStack)) return; // invalid move
+        if (oldStack.isEmpty() || !newStack.isEmpty() && !oldStack.equals(newStack)) return; // invalid move
         if (!oldStack.hasCustomHoverName()) return; // old item is not a valid item
 
         String oldName = McIf.getTextWithoutFormattingCodes(oldStack.getDisplayName());
@@ -793,7 +793,7 @@ public class ClientEvents implements Listener {
     private static boolean checkDropState(int slot, int key) {
         if (!Reference.onWorld) return false;
 
-        if (key == McIf.mc().options.keyBindDrop.getKey().getValue()) {
+        if (key == McIf.mc().options.keyDrop.getKey().getValue()) {
             if (!UtilitiesConfig.INSTANCE.locked_slots.containsKey(PlayerInfo.get(CharacterData.class).getClassId())) return false;
 
             return UtilitiesConfig.INSTANCE.locked_slots.get(PlayerInfo.get(CharacterData.class).getClassId()).contains(slot);
@@ -820,9 +820,9 @@ public class ClientEvents implements Listener {
     // blocking healing pots below
     @SubscribeEvent
     public void onUseItem(PacketEvent<CPlayerTryUseItemPacket> e) {
-        ItemStack item = McIf.player().getHeldItem(Hand.MAIN_HAND);
+        ItemStack item = McIf.player().getItemInHand(Hand.MAIN_HAND);
 
-        if (item.isEmpty() || !item.hasCustomHoverName() || !item.getDisplayName().contains(TextFormatting.RED + "Potion of Healing") || !UtilitiesConfig.INSTANCE.blockHealingPots) return;
+        if (item.isEmpty() || !item.hasCustomHoverName() || !item.getDisplayName().toString().contains(TextFormatting.RED + "Potion of Healing") || !UtilitiesConfig.INSTANCE.blockHealingPots) return;
 
         ClientPlayerEntity player = McIf.player();
         if (player.getHealth() != player.getMaxHealth()) return;
@@ -833,9 +833,9 @@ public class ClientEvents implements Listener {
 
     @SubscribeEvent
     public void onUseItemOnBlock(PacketEvent<CPlayerTryUseItemOnBlockPacket> e) {
-        ItemStack item = McIf.player().getHeldItem(Hand.MAIN_HAND);
+        ItemStack item = McIf.player().getItemInHand(Hand.MAIN_HAND);
 
-        if (item.isEmpty() || !item.hasCustomHoverName() || !item.getDisplayName().contains(TextFormatting.RED + "Potion of Healing") || !UtilitiesConfig.INSTANCE.blockHealingPots) return;
+        if (item.isEmpty() || !item.hasCustomHoverName() || !item.getDisplayName().toString().contains(TextFormatting.RED + "Potion of Healing") || !UtilitiesConfig.INSTANCE.blockHealingPots) return;
 
         ClientPlayerEntity player = McIf.player();
         if (player.getHealth() != player.getMaxHealth()) return;
@@ -846,9 +846,9 @@ public class ClientEvents implements Listener {
 
     @SubscribeEvent
     public void onUseItemOnEntity(PacketEvent<CUseEntityPacket> e) {
-        ItemStack item = McIf.player().getHeldItem(Hand.MAIN_HAND);
+        ItemStack item = McIf.player().getItemInHand(Hand.MAIN_HAND);
 
-        if (item.isEmpty() || !item.hasCustomHoverName() || !item.getDisplayName().contains(TextFormatting.RED + "Potion of Healing") || !UtilitiesConfig.INSTANCE.blockHealingPots) return;
+        if (item.isEmpty() || !item.hasCustomHoverName() || !item.getDisplayName().toString().contains(TextFormatting.RED + "Potion of Healing") || !UtilitiesConfig.INSTANCE.blockHealingPots) return;
 
         ClientPlayerEntity player = McIf.player();
         if (player.getHealth() != player.getMaxHealth()) return;
@@ -859,7 +859,7 @@ public class ClientEvents implements Listener {
 
     @SubscribeEvent
     public void rightClickItem(PlayerInteractEvent.RightClickItem e) {
-        if (!e.getItemStack().hasCustomHoverName() || !e.getItemStack().getDisplayName().contains(TextFormatting.RED + "Potion of Healing")) return;
+        if (!e.getItemStack().hasCustomHoverName() || !e.getItemStack().getDisplayName().toString().contains(TextFormatting.RED + "Potion of Healing")) return;
         if (e.getPlayer().getHealth() != e.getPlayer().getMaxHealth()) return;
 
         e.setCanceled(true);

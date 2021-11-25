@@ -22,7 +22,7 @@ public class CompassManager {
     public static void setCompassLocation(Location compassLocation) {
         CompassManager.compassLocation = compassLocation;
 
-        McIf.world().getLevelData().setSpawn(compassLocation.toBlockPos());
+        McIf.world().getLevelData().setSpawn(compassLocation.toBlockPos(), 0);
     }
 
     public static void reset() {

@@ -19,7 +19,6 @@ import com.wynntils.modules.music.managers.BossTrackManager;
 import com.wynntils.modules.music.managers.SoundTrackManager;
 import com.wynntils.modules.utilities.overlays.hud.WarTimerOverlay;
 import com.wynntils.webapi.WebManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.STitlePacket;
 import net.minecraft.network.play.server.SWindowItemsPacket;
@@ -74,7 +73,7 @@ public class ClientEvents implements Listener {
     public void dungeonTracks(PacketEvent<STitlePacket> e) {
         if (!MusicConfig.INSTANCE.replaceJukebox || e.getPacket().getType() != STitlePacket.Type.TITLE) return;
 
-        String title = McIf.getTextWithoutFormattingCodes(McIf.getFormattedText(e.getPacket().getMessage()));
+        String title = McIf.getTextWithoutFormattingCodes(e.getPacket().getText().toString());
         String songName = WebManager.getMusicLocations().getDungeonTrack(title);
         if (songName == null) return;
 

@@ -13,6 +13,8 @@ import com.wynntils.modules.core.overlays.UpdateOverlay;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 
 import java.io.File;
@@ -38,7 +40,8 @@ public class UpdatingScreen extends Screen {
 
     @Override
     public void init() {
-        this.buttons.add(backButton = new Button(0, this.width / 2 - 100, this.height / 4 + 132, 200, 20, ""));
+    	ITextComponent buttonText = new StringTextComponent("");
+        this.buttons.add(backButton = new Button(0, this.width / 2 - 100, this.height / 4 + 132, 200, 20, buttonText));
         updateText();
     }
 
@@ -57,7 +60,7 @@ public class UpdatingScreen extends Screen {
                 if (!failed) {
                     UpdateOverlay.scheduleCopyUpdateAtShutdown(jarName);
                     if (restartNow) {
-                        McIf.mc().shutdown();
+                        McIf.mc().close();
                     }
                     complete = true;
                     updateText();

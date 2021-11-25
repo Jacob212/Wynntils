@@ -7,7 +7,6 @@ package com.wynntils.core.events.custom;
 import com.wynntils.core.utils.objects.Location;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Event;
 
 public class LocationEvent extends Event {

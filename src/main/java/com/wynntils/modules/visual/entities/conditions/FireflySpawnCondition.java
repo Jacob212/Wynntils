@@ -11,9 +11,9 @@ import com.wynntils.core.utils.objects.SquareRegion;
 import com.wynntils.modules.visual.configs.VisualConfig;
 import com.wynntils.modules.visual.entities.EntityFirefly;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.init.Biomes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biomes;
 
 import java.util.Random;
 
@@ -26,13 +26,12 @@ public class FireflySpawnCondition implements EntitySpawnCodition {
     public boolean shouldSpawn(Location pos, World world, ClientPlayerEntity player, Random random) {
         if (!VisualConfig.Fireflies.INSTANCE.enabled) return false;
 
-        BlockPos block = pos.toBlockPos();
-        if (world.getBiome(block) != Biomes.FOREST && world.getBiome(block) != Biomes.SWAMPLAND) return false;
+        BlockPos block = pos.toBlockPos(); //Biome checks below shouldnt be like this.
+        if (world.getBiome(block).toString() != Biomes.FOREST.toString() && world.getBiome(block).toString() != Biomes.SWAMP.toString()) return false;
         if (!LIGHT_FOREST.isInside(pos) && !DARK_FOREST.isInside(pos)) return false;
 
         // Night starts at 12542 and ends at 23031
-        long worldTime = world.getWorldTime() % 24000;
-        if (worldTime < 12542 || worldTime > 23031) return false;
+        if (world.isDay()) return false;
 
         return EntityFirefly.fireflies.get() < VisualConfig.Fireflies.INSTANCE.spawnLimit
                 && random.nextInt(VisualConfig.Fireflies.INSTANCE.spawnRate) == 0;
@@ -41,7 +40,7 @@ public class FireflySpawnCondition implements EntitySpawnCodition {
     @Override
     public FakeEntity createEntity(Location location, World world, ClientPlayerEntity player, Random random) {
         float r, g, b;
-        if (world.getBiome(location.toBlockPos()) == Biomes.SWAMPLAND) {
+        if (world.getBiome(location.toBlockPos()).toString() == Biomes.SWAMP.toString()) {
             r = 0.29f; g = 0f; b = 0.5f; // dark firefly
         } else {
             r = 1f; g = 1f; b = 0f; // light firefly

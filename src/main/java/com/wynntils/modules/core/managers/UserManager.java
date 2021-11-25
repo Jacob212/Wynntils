@@ -12,7 +12,6 @@ import com.wynntils.modules.core.instances.account.WynntilsUser;
 import com.wynntils.webapi.WebManager;
 import com.wynntils.webapi.request.PostRequest;
 import com.wynntils.webapi.request.Request;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -54,7 +53,7 @@ public class UserManager {
                     // otherwise some weird texture corruption WILL happen
                     McIf.mc().submit(() -> {
                         TextureManager textureManager = McIf.mc().getTextureManager();
-                        textureManager.loadTexture(rl, info);
+                        textureManager.register(rl, info);
 
                         users.put(uuid, new WynntilsUser(AccountType.valueOf(user.get("accountType").getAsString()), info));
                     });

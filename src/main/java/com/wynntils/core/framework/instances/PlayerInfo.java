@@ -5,7 +5,6 @@
 package com.wynntils.core.framework.instances;
 
 import com.wynntils.core.framework.instances.containers.PlayerData;
-import com.wynntils.core.framework.instances.data.CharacterData;
 import com.wynntils.core.framework.instances.data.*;
 
 import java.util.HashSet;

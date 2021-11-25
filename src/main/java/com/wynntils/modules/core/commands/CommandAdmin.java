@@ -4,72 +4,50 @@
 
 package com.wynntils.modules.core.commands;
 
-import com.wynntils.McIf;
-import com.wynntils.modules.core.enums.AccountType;
-import com.wynntils.modules.core.managers.UserManager;
-import net.minecraft.client.Minecraft;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+//import com.wynntils.modules.core.enums.AccountType;
+//import com.wynntils.modules.core.managers.UserManager;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.util.text.ChatType;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.client.IClientCommand;
 
-import java.util.StringJoiner;
-
-public class CommandAdmin extends CommandBase implements IClientCommand {
-
-    @Override
-    public boolean allowUsageWithoutPrefix(ICommandSender sender, String message) {
-        return false;
-    }
-
-    @Override
-    public String getName() {
-        return "wadmin";
-    }
-
-    @Override
-    public String getUsage(ICommandSender sender) {
-        return "";
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (!UserManager.isAccountType(McIf.player().getUUID(), AccountType.MODERATOR)) return;
-
-        StringTextComponent output;
-
-        if (args.length >= 1 && args[0].equalsIgnoreCase("broadcast")) {
-            if (args.length < 3) {
-                output = new StringTextComponent("Use: /wadmin broadcast <TITLE/MESSAGE> <message>");
-                output.getStyle().setColor(TextFormatting.RED);
-
-                sender.sendMessage(output);
-                return;
-            }
-
-            String type = args[1].toUpperCase();
-
-            StringJoiner message = new StringJoiner(" ");
-            for (int i = 2; i < args.length; i++) {
-                message.add(args[i]);
-            }
-
-            //SocketManager.emitEvent("sendBroadcast", type, message);
-            return;
-        }
-
-        output = new StringTextComponent("Use: /wadmin broadcast");
-        output.getStyle().setColor(TextFormatting.RED);
-
-        sender.sendMessage(output);
-    }
-
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
-
+public class CommandAdmin {
+	public static void register(CommandDispatcher<CommandSource> dispatcher) {
+		LiteralArgumentBuilder<CommandSource> commandAdmin = Commands.literal("wadmin")
+				.requires((command) -> {
+//					return UserManager.isAccountType(McIf.player().getUUID(), AccountType.MODERATOR);
+					return true;
+		}).then(Commands.literal("broadcast").then(Commands.argument("type", StringArgumentType.word())
+				.then(Commands.argument("message", StringArgumentType.greedyString()).executes((command) -> {
+					return execute(command, StringArgumentType.getString(command, "type"), StringArgumentType.getString(command, "message"));
+					}))))
+				
+				.executes((command) -> {
+					return error(command);
+				});
+		dispatcher.register(commandAdmin);
+	}
+	
+	static int execute(CommandContext<CommandSource> commandContext, String type, String message) throws CommandSyntaxException {
+		System.out.println(message);
+		ITextComponent output = new StringTextComponent(message);
+		
+//		SocketManager.emitEvent("sendBroadcast", type, message);
+		commandContext.getSource().getServer().getPlayerList().broadcastMessage(output, ChatType.CHAT, commandContext.getSource().getEntity().getUUID());;
+		return 1;
+	}
+	
+	static int error(CommandContext<CommandSource> commandContext) {
+		ITextComponent output = new StringTextComponent("Use: /wadmin broadcast");
+		output.getStyle().withColor(TextFormatting.RED);
+		commandContext.getSource().getEntity().sendMessage(output, commandContext.getSource().getEntity().getUUID());
+		return 1;
+	}
 }

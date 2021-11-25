@@ -138,7 +138,7 @@ public class CachedChunkManager {
                 Thread.sleep(1000);
             } catch (Exception ignored) { }
 
-            int renderDistance = McIf.mc().options.renderDistanceChunks;
+            int renderDistance = McIf.mc().options.renderDistance;
             ChunkPos player = new ChunkPos(McIf.player().xChunk, McIf.player().zChunk);
 
             // Start by removing chunks that are not in the render distance

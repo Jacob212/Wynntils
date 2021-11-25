@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.Validate;
 
@@ -94,17 +95,20 @@ public class ServerIcon {
                 return;
             }
             server.pinged = true;
-            server.pingToServer = -2L;
-            server.serverMOTD = "";
-            server.populationInfo = "";
+            server.ping = -2L;
+            server.motd = new StringTextComponent("");
             try {
-                pinger.ping(server);
+                pinger.pingServer(server, new Runnable() {
+					public void run() {
+						
+					}
+				});
             } catch (UnknownHostException ignored) {
-                server.pingToServer = -1L;
-                server.serverMOTD = TextFormatting.DARK_RED + I18n.format("multiplayer.status.cannot_resolve");
+                server.ping = -1L;
+                server.motd = TextFormatting.DARK_RED + I18n.format("multiplayer.status.cannot_resolve");
             } catch (Exception ignored) {
-                server.pingToServer = -1L;
-                server.serverMOTD = TextFormatting.DARK_RED + I18n.format("multiplayer.status.cannot_connect");
+                server.ping = -1L;
+                server.motd = TextFormatting.DARK_RED + I18n.format("multiplayer.status.cannot_connect");
             }
         }
     }
@@ -117,7 +121,7 @@ public class ServerIcon {
     }
 
     public synchronized boolean isDone() {
-        return Objects.equals(server.getBase64EncodedIconData(), lastIcon);
+        return Objects.equals(server.getIconB64(), lastIcon);
     }
 
     private synchronized void onDone() {
@@ -135,7 +139,7 @@ public class ServerIcon {
 
     // Modified from net.minecraft.client.gui.screen.ServerListEntryNormal$prepareServerIcon
     public synchronized ResourceLocation getServerIcon() {
-        String currentIcon = server.getBase64EncodedIconData();
+        String currentIcon = server.getIconB64();
         if (Objects.equals(currentIcon, lastIcon)) return icon == null ? null : serverIcon;
 
         lastIcon = currentIcon;
@@ -151,15 +155,15 @@ public class ServerIcon {
         try {
             bufferedimage = parseServerIcon(lastIcon);
         } catch (Throwable throwable) {
-            Reference.LOGGER.error("Invalid icon for server " + server.serverName + " (" + server.ip + ")", throwable);
-            server.setBase64EncodedIconData(null);
+            Reference.LOGGER.error("Invalid icon for server " + server.name + " (" + server.ip + ")", throwable);
+            server.setIconB64(null);
             onDone();
             return null;
         }
 
         if (icon == null) {
-            icon = new DynamicTexture(bufferedimage.getWidth(), bufferedimage.getHeight());
-            McIf.mc().getTextureManager().loadTexture(serverIcon, icon);
+            icon = new DynamicTexture(bufferedimage.getWidth(), bufferedimage.getHeight(), false);
+            McIf.mc().getTextureManager().register(serverIcon, icon);
         }
 
         bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), icon.getTextureData(), 0, bufferedimage.getWidth());
@@ -175,7 +179,7 @@ public class ServerIcon {
         BufferedImage bufferedimage;
         try {
             bytebuf1 = Base64.decode(bytebuf);
-            bufferedimage = TextureUtil.readBufferedImage(new ByteBufInputStream(bytebuf1));
+            bufferedimage = TextureUtil.readResource(new ByteBufInputStream(bytebuf1));
             Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
             Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
             return bufferedimage;

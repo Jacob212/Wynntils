@@ -12,7 +12,9 @@ import com.wynntils.modules.utilities.instances.ServerIcon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.util.Util;
-import org.lwjgl.opengl.Display;
+//import org.lwjgl.opengl.Display;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWImage;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
@@ -30,9 +32,9 @@ public class WindowIconManager {
 
     private static void setIcon() {
         BufferedImage bufferedimage;
-        ServerData server = McIf.mc().getCurrentServerData();
+        ServerData server = McIf.mc().getCurrentServer();
         String base64;
-        if (server == null || (base64 = server.getBase64EncodedIconData()) == null) {
+        if (server == null || (base64 = server.getIconB64()) == null) {
             serverIconInvalid = true;
             return;
         }
@@ -88,21 +90,22 @@ public class WindowIconManager {
         bytebuffer64.flip();
         bytebuffer32.flip();
         bytebuffer16.flip();
-
-        McIf.mc().submit(() -> Display.setIcon(new ByteBuffer[]{ bytebuffer128, bytebuffer64, bytebuffer32, bytebuffer16 }));
+        GLFWImage.Buffer buffer = new GLFWImage.Buffer(bytebuffer16);
+//      new ByteBuffer{ bytebuffer128, bytebuffer64, bytebuffer32, bytebuffer16 }
+        McIf.mc().submit(() -> GLFW.glfwSetWindowIcon(McIf.mc().getWindow().getWindow(), buffer));
         setToServerIcon = true;
         serverIconInvalid = false;
     }
 
     public static synchronized void update() {
-        if (Util.getOSType() == Util.EnumOS.OSX) return;  // Does not work on macOS
+        if (Util.getPlatform() == Util.OS.OSX) return;  // Does not work on macOS
 
         if (UtilitiesConfig.INSTANCE.changeWindowIcon && Reference.onServer) {
             if (!setToServerIcon && !serverIconInvalid) {
-                setIcon();
+//                setIcon();
             }
         } else if (setToServerIcon) {
-            deleteIcon();
+//            deleteIcon();
         }
     }
 

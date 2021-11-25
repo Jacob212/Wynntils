@@ -69,8 +69,8 @@ public class ChatGUI extends ChatScreen {
         }
 
         return super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
+    }    
+    
     @Override
     protected void actionPerformed(Button button) throws IOException {
         if (button == addTab) {

@@ -16,7 +16,6 @@ import com.wynntils.modules.chat.configs.ChatConfig;
 import com.wynntils.modules.chat.overlays.ChatOverlay;
 import com.wynntils.modules.core.managers.CompassManager;
 import com.wynntils.modules.map.overlays.ui.MainWorldMapUI;
-import net.minecraft.client.Minecraft;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
@@ -85,7 +84,7 @@ public class HeldItemChatManager {
                 return;
             }
 
-            Utils.setScreen(new MainWorldMapUI((float) compass.getX(), (float) compass.getZ()));
+            Utils.setScreen(new MainWorldMapUI((float) compass.clone().getX(), (float) compass.getZ()));
         }
     }
 
@@ -93,32 +92,32 @@ public class HeldItemChatManager {
         ITextComponent base = new StringTextComponent("Compass Beacon");
         ITextComponent text = base;
 
-        text.getStyle().setColor(TextFormatting.RED);
-        text.getStyle().setBold(true);
+        text.getStyle().withColor(TextFormatting.RED);
+        text.getStyle().withBold(true);
 
         text = add(text, new StringTextComponent(" "));
-        text.getStyle().setColor(TextFormatting.WHITE);
-        text.getStyle().setBold(false);
+        text.getStyle().withColor(TextFormatting.WHITE);
+        text.getStyle().withBold(false);
 
         Location compass = CompassManager.getCompassLocation();
         if (compass != null) {
             ITextComponent clearBeacon = add(text, new StringTextComponent("[Clear beacon]"));
-            clearBeacon.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to clear the compass beacon")));
-            clearBeacon.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/compass clear"));
+            clearBeacon.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to clear the compass beacon")));
+            clearBeacon.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/compass clear"));
 
             text = add(text, new StringTextComponent(" "));
         }
 
         add(text, getCancelComponent());
         text = add(text, new StringTextComponent("\n"));
-        text.getStyle().setColor(TextFormatting.WHITE);
+        text.getStyle().withColor(TextFormatting.WHITE);
 
         if (compass == null) {
             ITextComponent suggestCompass = add(text, new StringTextComponent("Compass beacon not set"));
-            suggestCompass.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Do /compass or middle click on map to set compass")));
-            suggestCompass.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/compass "));
-            suggestCompass.getStyle().setColor(TextFormatting.GRAY);
-            suggestCompass.getStyle().setItalic(true);
+            suggestCompass.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Do /compass or middle click on map to set compass")));
+            suggestCompass.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/compass "));
+            suggestCompass.getStyle().withColor(TextFormatting.GRAY);
+            suggestCompass.getStyle().withItalic(true);
             return base;
         }
 
@@ -134,8 +133,8 @@ public class HeldItemChatManager {
             MathHelper.floor(compassX), MathHelper.floor(compassZ), distance
         )));
 
-        text.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to show on main map")));
-        text.getStyle().setClickEvent(TextAction.getStaticEvent(OnOpenMapAtCompassClick.class));
+        text.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Click to show on main map")));
+        text.getStyle().withClickEvent(TextAction.getStaticEvent(OnOpenMapAtCompassClick.class));
 
         return base;
     }
@@ -151,12 +150,12 @@ public class HeldItemChatManager {
         ITextComponent base = new StringTextComponent("Soul points");
         ITextComponent text = base;
 
-        text.getStyle().setColor(TextFormatting.AQUA);
-        text.getStyle().setBold(true);
+        text.getStyle().withColor(TextFormatting.AQUA);
+        text.getStyle().withBold(true);
 
         text = add(text, new StringTextComponent(" "));
-        text.getStyle().setColor(TextFormatting.WHITE);
-        text.getStyle().setBold(false);
+        text.getStyle().withColor(TextFormatting.WHITE);
+        text.getStyle().withBold(false);
 
         add(text, getCancelComponent());
         text = add(text, new StringTextComponent("\n"));
@@ -199,8 +198,8 @@ public class HeldItemChatManager {
 
     private static ITextComponent getCancelComponent() {
         ITextComponent msg = new StringTextComponent("[x]");
-        msg.getStyle().setColor(TextFormatting.DARK_RED);
-        msg.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Do not show this text")));
+        msg.getStyle().withColor(TextFormatting.DARK_RED);
+        msg.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Do not show this text")));
 
         return TextAction.withStaticEvent(msg, OnCancelClick.class);
     }
@@ -229,7 +228,7 @@ public class HeldItemChatManager {
     }
 
     private static ITextComponent add(ITextComponent to, ITextComponent what) {
-        to.appendSibling(what);
+        to.getSiblings().add(what);
         return what;
     }
 

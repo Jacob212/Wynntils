@@ -6,7 +6,7 @@ package com.wynntils.modules.chat.instances;
 
 import com.wynntils.McIf;
 import com.wynntils.core.utils.objects.Pair;
-import net.minecraft.client.gui.screen.ChatLine;
+import net.minecraft.client.gui.ChatLine;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.ArrayList;
@@ -102,7 +102,7 @@ public class ChatTab implements Comparable<ChatTab> {
     }
 
     public void addMessage(ChatLine msg) {
-        if (msg.getChatLineID() == 0) {
+        if (msg.getId() == 0) {
             hasNewMessages = true;
         }
         currentMessages.add(0, msg);

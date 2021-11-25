@@ -4,42 +4,36 @@
 
 package com.wynntils.modules.core.commands;
 
-import com.wynntils.webapi.WebManager;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+//import com.wynntils.webapi.WebManager;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.client.IClientCommand;
 
-public class CommandForceUpdate extends CommandBase implements IClientCommand {
-
-    @Override
-    public boolean allowUsageWithoutPrefix(ICommandSender sender, String message) {
-        return false;
-    }
-
-    @Override
-    public String getName() {
-        return "forceupdate";
-    }
-
-    @Override
-    public String getUsage(ICommandSender sender) {
-        return "Force Wynntils to update";
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
-        WebManager.getUpdate().forceUpdate();
+public class CommandForceUpdate {
+	public static void register(CommandDispatcher<CommandSource> dispatcher) {
+		LiteralArgumentBuilder<CommandSource> commandForceUpdate = Commands.literal("forceupdate")
+				.requires((command) -> {
+					return true;
+//					return command.hasPermission(0);
+				}).executes((command) -> {
+					return update(command);
+				});
+		
+		
+		dispatcher.register(commandForceUpdate);
+	}
+	
+	static int update(CommandContext<CommandSource> commandContext) {
+//		WebManager.getUpdate().forceUpdate();
 
         StringTextComponent text = new StringTextComponent("Forcing Wynntils to update...");
-        text.getStyle().setColor(TextFormatting.AQUA);
-        sender.sendMessage(text);
-    }
-
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
+        text.getStyle().withColor(TextFormatting.AQUA);
+        commandContext.getSource().getEntity().sendMessage(text, commandContext.getSource().getEntity().getUUID());;
+        return 1;
+	}
 }
