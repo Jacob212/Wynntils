@@ -43,6 +43,9 @@ minecraft {
         client {
             workingDirectory project.file('run')
 
+			args '--username=${string_prompt:Minecraft Email/Username}'
+            args '--password=${password_prompt:Minecraft Password}'
+
             // Recommended logging data for a userdev environment
             // The markers can be changed as needed.
             // "SCAN": For mods scan.

@@ -4,22 +4,29 @@
 
 package com.wynntils.core.events;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.wynntils.McIf;
 import com.wynntils.Reference;
+import com.wynntils.ModCore;
 import com.wynntils.core.events.custom.*;
-import com.wynntils.core.framework.FrameworkManager;
 import com.wynntils.core.framework.enums.ClassType;
 import com.wynntils.core.framework.enums.professions.ProfessionType;
 import com.wynntils.core.framework.instances.PlayerInfo;
+import com.wynntils.core.framework.FrameworkManager;
 import com.wynntils.core.framework.instances.data.CharacterData;
 import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.utils.reflections.ReflectionFields;
 import com.wynntils.core.utils.reflections.ReflectionMethods;
 import com.wynntils.modules.core.managers.GuildAndFriendManager;
-import net.minecraft.client.gui.screen.DisconnectedScreen;
+
 import net.minecraft.client.gui.screen.ConnectingScreen;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPlayerListItemPacket;
 import net.minecraft.network.play.server.SPlayerListItemPacket.Action;
@@ -27,21 +34,20 @@ import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+@EventBusSubscriber(modid = ModCore.MOD_ID, bus = Bus.FORGE, value = Dist.CLIENT)
 public class ClientEvents {
-
-    private static final UUID WORLD_UUID = UUID.fromString("16ff7452-714f-3752-b3cd-c3cb2068f6af");
+	
+	private static final UUID WORLD_UUID = UUID.fromString("16ff7452-714f-3752-b3cd-c3cb2068f6af");
     private static final Pattern PROF_LEVEL_UP = Pattern.compile("You are now level ([0-9]*) in (.*)");
     private static final Pattern SPELL_CAST = Pattern.compile("^§7(.*) spell cast!§3 \\[§b-([0-9]+) ✺§3\\]$");
 
@@ -49,27 +55,27 @@ public class ClientEvents {
     private String lastWorld = "";
     private boolean acceptLeft = false;
     public static String statusMsg;
-
+    
     public static void setLoadingStatusMsg(String msg) {
         statusMsg = msg;
     }
 
     @SubscribeEvent
-    public void onConnectScreen(GuiOpenEvent e) {
+    public static void onConnectScreen(GuiOpenEvent e) {
         if (!(e.getGui() instanceof ConnectingScreen)) return;
 
         setLoadingStatusMsg("Trying to connect...");
     }
 
     @SubscribeEvent
-    public void onScreenDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
+    public static void onScreenDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
         if (!(e.getGui() instanceof ConnectingScreen)) return;
 
         McIf.mc().font.drawShadow(new MatrixStack(), statusMsg, (float)(e.getGui().width / 2 - McIf.mc().font.width(statusMsg) / 2), (float)(e.getGui().height / 2 - 20), 16777215);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onServerJoin(ClientPlayerNetworkEvent.LoggedInEvent e) {
+    public static void onServerJoin(ClientPlayerNetworkEvent.LoggedInEvent e) {
         setLoadingStatusMsg("Connected...");
         Reference.setUserWorld(null);
 
@@ -77,7 +83,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onServerLeave(ClientPlayerNetworkEvent.LoggedOutEvent e) {
+    public static void onServerLeave(ClientPlayerNetworkEvent.LoggedOutEvent e) {
         if (Reference.onServer) {
             if (Reference.onWorld) {
                 Reference.setUserWorld(null);
@@ -88,13 +94,13 @@ public class ClientEvents {
         }
     }
 
-    boolean isNextQuestCompleted = false;
-
+    static boolean isNextQuestCompleted = false;
+    
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void triggerGameEvents(ClientChatReceivedEvent e) {
+    public static void triggerGameEvents(ClientChatReceivedEvent e) {
         if (e.getType() == ChatType.GAME_INFO) return;
 
-        String message = McIf.getUnformattedText(e.getMessage());
+        String message = e.getMessage().getString();
 
         if (message.contains("\u27a4")) return;  // Whisper from a player
 
@@ -148,26 +154,24 @@ public class ClientEvents {
     }
 
     // class selection stuff
-    boolean loadingClassSelection = false;
+    static boolean loadingClassSelection = false;
 
     // this is not triggered if autojoin is disabled!
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void detectClassCommand(ClientChatEvent e) {
+    public static void detectClassCommand(ClientChatEvent e) {
         if (!Reference.onWorld || !e.getMessage().startsWith("/class")) return;
 
         loadingClassSelection = true;
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void openClassSelection(GuiScreenEvent.DrawScreenEvent.Post e) {
+    public static void openClassSelection(GuiScreenEvent.DrawScreenEvent.Post e) {
         if (!loadingClassSelection) return;
-
         // updates the user class to NONE since it's not using a class anymore
         PlayerInfo.get(CharacterData.class).updatePlayerClass(ClassType.NONE, false);
         loadingClassSelection = false;
     }
 
-    //
     @SubscribeEvent
     public void onTabListChange(PacketEvent<SPlayerListItemPacket> e) {
         if (!Reference.onServer) return;
@@ -204,17 +208,17 @@ public class ClientEvents {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void handleFrameworkEvents(Event e) {
+    public static void handleFrameworkEvents(Event e) {
         FrameworkManager.triggerEvent(e);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void handleFrameworkPreHud(RenderGameOverlayEvent.Pre e) {
+    public static void handleFrameworkPreHud(RenderGameOverlayEvent.Pre e) {
         FrameworkManager.triggerPreHud(e);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void handleFrameworkPostHud(RenderGameOverlayEvent.Post e) {
+    public static void handleFrameworkPostHud(RenderGameOverlayEvent.Post e) {
         FrameworkManager.triggerPostHud(e);
     }
 
@@ -231,7 +235,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void onWorldLeave(GuiOpenEvent e) {
+    public static void onWorldLeave(GuiOpenEvent e) {
         if (Reference.onServer && e.getGui() instanceof DisconnectedScreen) {
             if (Reference.onWorld) {
                 Reference.setUserWorld(null);
@@ -243,7 +247,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent
-    public void checkSpellCast(TickEvent.ClientTickEvent e) {
+    public static void checkSpellCast(TickEvent.ClientTickEvent e) {
         if (!Reference.onWorld) return;
 
         int remainingHighlightTicks = ReflectionFields.IngameGui_remainingHighlightTicks.getValue(McIf.mc().gui);
