@@ -7,6 +7,7 @@ package com.wynntils.modules.core.events;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.wynntils.McIf;
+import com.wynntils.ModCore;
 import com.wynntils.Reference;
 import com.wynntils.core.events.custom.*;
 import com.wynntils.core.framework.FrameworkManager;
@@ -27,13 +28,13 @@ import com.wynntils.modules.core.instances.packet.PacketOutgoingFilter;
 import com.wynntils.modules.core.managers.CompassManager;
 import com.wynntils.modules.core.managers.PacketQueue;
 import com.wynntils.modules.core.managers.PartyManager;
-import com.wynntils.modules.core.managers.UserManager;
+//import com.wynntils.modules.core.managers.UserManager;
 import com.wynntils.modules.core.overlays.UpdateOverlay;
-import com.wynntils.modules.core.overlays.ui.ChangelogUI;
-import com.wynntils.modules.core.overlays.ui.PlayerInfoReplacer;
-import com.wynntils.webapi.WebManager;
+//import com.wynntils.modules.core.overlays.ui.ChangelogUI;
+//import com.wynntils.modules.core.overlays.ui.PlayerInfoReplacer;
+//import com.wynntils.webapi.WebManager;
 import com.wynntils.webapi.downloader.DownloaderManager;
-import com.wynntils.webapi.profiles.TerritoryProfile;
+//import com.wynntils.webapi.profiles.TerritoryProfile;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.IngameGui;
 import net.minecraft.network.play.server.SWorldSpawnChangedPacket;
@@ -41,11 +42,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+//import net.minecraftforge.fml.common.network.FMLNetworkEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -70,19 +74,19 @@ public class ServerEvents implements Listener {
      *
      * @param e Represents the event
      */
-    @SubscribeEvent
-    public void joinServer(FMLNetworkEvent.ClientConnectedToServerEvent e) {
-        e.getManager().channel().pipeline().addBefore("fml:packet_handler", Reference.MOD_ID + ":packet_filter", new PacketIncomingFilter());
-        e.getManager().channel().pipeline().addBefore("fml:packet_handler", Reference.MOD_ID + ":outgoingFilter", new PacketOutgoingFilter());
-
-        IngameGui ingameGui = McIf.mc().gui;
-        ReflectionFields.IngameGui_overlayPlayerList.setValue(ingameGui, new PlayerInfoReplacer(McIf.mc(), ingameGui));
-
-        WebManager.tryReloadApiUrls(true);
-        WebManager.checkForUpdatesOnJoin();
-
-        DownloaderManager.startDownloading();
-    }
+//    @SubscribeEvent
+//    public void joinServer(FMLNetworkEvent.ClientConnectedToServerEvent e) {
+//        e.getManager().channel().pipeline().addBefore("fml:packet_handler", Reference.MOD_ID + ":packet_filter", new PacketIncomingFilter());
+//        e.getManager().channel().pipeline().addBefore("fml:packet_handler", Reference.MOD_ID + ":outgoingFilter", new PacketOutgoingFilter());
+//
+//        IngameGui ingameGui = McIf.mc().gui;
+//        ReflectionFields.IngameGui_overlayPlayerList.setValue(ingameGui, new PlayerInfoReplacer(McIf.mc(), ingameGui));
+//
+//        WebManager.tryReloadApiUrls(true);
+//        WebManager.checkForUpdatesOnJoin();
+//
+//        DownloaderManager.startDownloading();
+//    }
 
     boolean waitingForFriendList = false;
     boolean waitingForGuildList = false;
@@ -96,36 +100,36 @@ public class ServerEvents implements Listener {
      *
      * @param e Represents the event
      */
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void joinWorldEvent(WynnWorldEvent.Join e) {
-        if (PlayerInfo.get(CharacterData.class).getClassId() == -1 || CoreDBConfig.INSTANCE.lastClass == ClassType.NONE)
-            McIf.player().chat("/class");
-
-        // This codeblock will only be executed if the Wynncraft AUTOJOIN setting is enabled
-        // Reason: When you join a world with autojoin enabled, your current class is NONE,
-        // while joining without autojoin will make your current class into the selected over the character selection.
-        CharacterData data = PlayerInfo.get(CharacterData.class);
-        if (data.getCurrentClass() == ClassType.NONE && CoreDBConfig.INSTANCE.lastClass != ClassType.NONE) {
-            data.updatePlayerClass(CoreDBConfig.INSTANCE.lastClass, CoreDBConfig.INSTANCE.lastClassIsReskinned);
-        }
-
-        if (Reference.onWars || Reference.onNether) return; // avoid dispatching commands while in wars/nether
-
-        // guild members
-        if (WebManager.getPlayerProfile() != null && WebManager.getPlayerProfile().getGuildName() != null) {
-            waitingForGuildList = true;
-            McIf.player().chat("/guild list");
-        }
-
-        // friends
-        waitingForFriendList = true;
-        McIf.player().chat("/friends list");
-
-        // party members
-        PartyManager.handlePartyList();  // party list here
-
-        startUpdateRegionName();
-    }
+//    @SubscribeEvent(priority = EventPriority.LOWEST)
+//    public void joinWorldEvent(WynnWorldEvent.Join e) {
+//        if (PlayerInfo.get(CharacterData.class).getClassId() == -1 || CoreDBConfig.INSTANCE.lastClass == ClassType.NONE)
+//            McIf.player().chat("/class");
+//
+//        // This codeblock will only be executed if the Wynncraft AUTOJOIN setting is enabled
+//        // Reason: When you join a world with autojoin enabled, your current class is NONE,
+//        // while joining without autojoin will make your current class into the selected over the character selection.
+//        CharacterData data = PlayerInfo.get(CharacterData.class);
+//        if (data.getCurrentClass() == ClassType.NONE && CoreDBConfig.INSTANCE.lastClass != ClassType.NONE) {
+//            data.updatePlayerClass(CoreDBConfig.INSTANCE.lastClass, CoreDBConfig.INSTANCE.lastClassIsReskinned);
+//        }
+//
+//        if (Reference.onWars || Reference.onNether) return; // avoid dispatching commands while in wars/nether
+//
+//        // guild members
+//        if (WebManager.getPlayerProfile() != null && WebManager.getPlayerProfile().getGuildName() != null) {
+//            waitingForGuildList = true;
+//            McIf.player().chat("/guild list");
+//        }
+//
+//        // friends
+//        waitingForFriendList = true;
+//        McIf.player().chat("/friends list");
+//
+//        // party members
+//        PartyManager.handlePartyList();  // party list here
+//
+//        startUpdateRegionName();
+//    }
 
     /**
      * Detects and register the current friend list of the user
@@ -236,15 +240,15 @@ public class ServerEvents implements Listener {
     /**
      * Warns user if Athena is currently down
      */
-    @SubscribeEvent
-    public void onJoinServer(WynncraftServerEvent.Login e) {
-        if (WebManager.isAthenaOnline()) return;
-
-        StringTextComponent msg = new StringTextComponent("The Wynntils servers are currently down! You can still use Wynntils, but some features may not work. Our servers should be back soon.");
-        msg.getStyle().setColor(TextFormatting.RED);
-        msg.getStyle().setBold(true);
-        new Delay(() -> McIf.sendMessage(msg), 30); // delay so the player actually loads in
-    }
+//    @SubscribeEvent
+//    public void onJoinServer(WynncraftServerEvent.Login e) {
+//        if (WebManager.isAthenaOnline()) return;
+//
+//        StringTextComponent msg = new StringTextComponent("The Wynntils servers are currently down! You can still use Wynntils, but some features may not work. Our servers should be back soon.");
+//        msg.getStyle().withColor(TextFormatting.RED);
+//        msg.getStyle().withBold(true);
+//        new Delay(() -> McIf.sendMessage(msg), 30); // delay so the player actually loads in
+//    }
 
     private static boolean triedToShowChangelog = false;
 
@@ -252,31 +256,31 @@ public class ServerEvents implements Listener {
      * Detects when the user enters the Wynncraft Server
      * Used for displaying the Changelog UI
      */
-    @SubscribeEvent
-    public void onJoinLobby(WynnClassChangeEvent e) {
-        if (!Reference.onServer || !CoreDBConfig.INSTANCE.enableChangelogOnUpdate || !CoreDBConfig.INSTANCE.showChangelogs) return;
-        if (UpdateOverlay.isDownloading() || DownloaderManager.isRestartOnQueueFinish() || McIf.world() == null) return;
-        if (e.getNewClass() == ClassType.NONE) return;
-
-        synchronized (this) {
-            if (triedToShowChangelog) return;
-            triedToShowChangelog = true;
-        }
-
-        boolean major = !CoreDBConfig.INSTANCE.lastVersion.equals(Reference.VERSION) || CoreDBConfig.INSTANCE.updateStream == UpdateStream.STABLE;
-        new Thread(() -> {
-            List<String> changelog = WebManager.getChangelog(major, false);
-            if (changelog == null) return;
-
-            McIf.mc().submit(() -> {
-                McIf.mc().setScreen(new ChangelogUI(changelog, major));
-
-                // Showed changelog; Don't show next time.
-                CoreDBConfig.INSTANCE.showChangelogs = false;
-                CoreDBConfig.INSTANCE.saveSettings(CoreModule.getModule());
-            });
-        }, "wynntils-changelog-downloader").start();
-    }
+//    @SubscribeEvent
+//    public void onJoinLobby(WynnClassChangeEvent e) {
+//        if (!Reference.onServer || !CoreDBConfig.INSTANCE.enableChangelogOnUpdate || !CoreDBConfig.INSTANCE.showChangelogs) return;
+//        if (UpdateOverlay.isDownloading() || DownloaderManager.isRestartOnQueueFinish() || McIf.world() == null) return;
+//        if (e.getNewClass() == ClassType.NONE) return;
+//
+//        synchronized (this) {
+//            if (triedToShowChangelog) return;
+//            triedToShowChangelog = true;
+//        }
+//
+//        boolean major = !CoreDBConfig.INSTANCE.lastVersion.equals(Reference.VERSION) || CoreDBConfig.INSTANCE.updateStream == UpdateStream.STABLE;
+//        new Thread(() -> {
+//            List<String> changelog = WebManager.getChangelog(major, false);
+//            if (changelog == null) return;
+//
+//            McIf.mc().submit(() -> {
+//                McIf.mc().setScreen(new ChangelogUI(changelog, major));
+//
+//                // Showed changelog; Don't show next time.
+//                CoreDBConfig.INSTANCE.showChangelogs = false;
+//                CoreDBConfig.INSTANCE.saveSettings(CoreModule.getModule());
+//            });
+//        }, "wynntils-changelog-downloader").start();
+//    }
 
     static BlockPos currentSpawn = null;
 
@@ -296,15 +300,15 @@ public class ServerEvents implements Listener {
         }
     }
 
-    @SubscribeEvent
-    public void leaveServer(WynncraftServerEvent.Leave e) {
-        UserManager.clearRegistry();
-        EntityManager.clearEntities();
-
-        if (updateTimer != null && !updateTimer.isCancelled()) {
-            updateTimer.cancel(true);
-        }
-    }
+//    @SubscribeEvent
+//    public void leaveServer(WynncraftServerEvent.Leave e) {
+//        UserManager.clearRegistry();
+//        EntityManager.clearEntities();
+//
+//        if (updateTimer != null && !updateTimer.isCancelled()) {
+//            updateTimer.cancel(true);
+//        }
+//    }
 
     public static BlockPos getCurrentSpawnPosition() {
         return currentSpawn;
@@ -323,58 +327,58 @@ public class ServerEvents implements Listener {
     /**
      * Starts to check player location for current player territory info
      */
-    private static void startUpdateRegionName() {
-        updateTimer = executor.scheduleAtFixedRate(() -> {
-            ClientPlayerEntity pl = McIf.player();
-
-            FrameworkManager.getEventBus().post(new SchedulerEvent.RegionUpdate());
-
-            LocationData data = PlayerInfo.get(LocationData.class);
-            if (!data.inUnknownLocation()) {
-                String location = data.getLocation();
-                if (!WebManager.getTerritories().containsKey(location)) {
-                    location = location.replace('\'', '’');
-                }
-
-                TerritoryProfile currentLocation = WebManager.getTerritories().get(location);
-
-                if (currentLocation != null && currentLocation.insideArea((int) pl.getX(), (int) pl.getZ())) {
-                    return;
-                }
-            }
-
-            for (TerritoryProfile pf : WebManager.getTerritories().values()) {
-                if (pf.insideArea((int) pl.getX(), (int) pl.getZ())) {
-                    data.setLocation(pf.getFriendlyName());
-                    return;
-                }
-            }
-
-            int chunkX = pl.xChunk; // FIXME: 1.16 -- is this the correct replacement? /magicus
-            int chunkZ = pl.zChunk;
-
-            // housing instances are over these chunk coordinates
-            if (chunkX >= 4096 && chunkZ >= 4096) {
-                if (data.inHousing()) return;
-
-                data.setLocation("Housing");
-                return;
-            }
-
-            // war arenas are below these chunk coordinates
-            if (chunkX <= -4096 && chunkZ <= -4096) {
-                if (data.inWars()) return;
-
-                data.setLocation("Wars");
-                return;
-            }
-
-            // none match, set to unknow
-            if (!data.inUnknownLocation()) {
-                data.setLocation("");
-            }
-
-        }, 0, 3, TimeUnit.SECONDS);
-    }
+//    private static void startUpdateRegionName() {
+//        updateTimer = executor.scheduleAtFixedRate(() -> {
+//            ClientPlayerEntity pl = McIf.player();
+//
+//            FrameworkManager.getEventBus().post(new SchedulerEvent.RegionUpdate());
+//
+//            LocationData data = PlayerInfo.get(LocationData.class);
+//            if (!data.inUnknownLocation()) {
+//                String location = data.getLocation();
+//                if (!WebManager.getTerritories().containsKey(location)) {
+//                    location = location.replace('\'', '’');
+//                }
+//
+//                TerritoryProfile currentLocation = WebManager.getTerritories().get(location);
+//
+//                if (currentLocation != null && currentLocation.insideArea((int) pl.getX(), (int) pl.getZ())) {
+//                    return;
+//                }
+//            }
+//
+//            for (TerritoryProfile pf : WebManager.getTerritories().values()) {
+//                if (pf.insideArea((int) pl.getX(), (int) pl.getZ())) {
+//                    data.setLocation(pf.getFriendlyName());
+//                    return;
+//                }
+//            }
+//
+//            int chunkX = pl.xChunk; // FIXME: 1.16 -- is this the correct replacement? /magicus
+//            int chunkZ = pl.zChunk;
+//
+//            // housing instances are over these chunk coordinates
+//            if (chunkX >= 4096 && chunkZ >= 4096) {
+//                if (data.inHousing()) return;
+//
+//                data.setLocation("Housing");
+//                return;
+//            }
+//
+//            // war arenas are below these chunk coordinates
+//            if (chunkX <= -4096 && chunkZ <= -4096) {
+//                if (data.inWars()) return;
+//
+//                data.setLocation("Wars");
+//                return;
+//            }
+//
+//            // none match, set to unknow
+//            if (!data.inUnknownLocation()) {
+//                data.setLocation("");
+//            }
+//
+//        }, 0, 3, TimeUnit.SECONDS);
+//    }
 
 }
