@@ -40,38 +40,39 @@ public class MainMenuButtons {
 
     private static boolean alreadyLoaded = false;
 
-    public static void addButtons(MainMenuScreen to, List<Button> buttons, boolean resize) {
-//        if (!CoreDBConfig.INSTANCE.addMainMenuButton) return;
-
-        if (lastButton == null || !resize) {
-            ServerData s = getWynncraftServerData();
-//            FMLClientHandler.instance().setupServerList();
-
-//            lastButton = new WynncraftButton(s, WYNNCRAFT_BUTTON_ID, to.width / 2 + 104, to.height / 4 + 48 + 24, (button) -> {
-//            	actionPerformed(to, button, buttons);
-//                 });
-//            WebManager.checkForUpdates();
-            UpdateOverlay.reset();
-
-            buttons.add(lastButton);
-
-            // little pling when finished loading
-            if (!alreadyLoaded) {
-                McIf.mc().getSoundManager().play(SimpleSound.forUI(SoundEvents.NOTE_BLOCK_PLING, 1f));
-                alreadyLoaded = true;
-            }
-            return;
-        }
-
-        lastButton.x = to.width / 2 + 104; lastButton.y = to.height / 4 + 48 + 24;
-        buttons.add(lastButton);
-    }
+    //TODO Not needed anymore
+//    public static void addButtons(MainMenuScreen to, List<Button> buttons, boolean resize) {
+////        if (!CoreDBConfig.INSTANCE.addMainMenuButton) return;
+//
+//        if (lastButton == null || !resize) {
+//            ServerData s = getWynncraftServerData();
+////            FMLClientHandler.instance().setupServerList();
+//
+////            lastButton = new WynncraftButton(s, WYNNCRAFT_BUTTON_ID, to.width / 2 + 104, to.height / 4 + 48 + 24, (button) -> {
+////            	actionPerformed(to, button, buttons);
+////                 });
+////            WebManager.checkForUpdates();
+//            UpdateOverlay.reset();
+//
+//            buttons.add(lastButton);
+//
+//            // little pling when finished loading
+//            if (!alreadyLoaded) {
+//                McIf.mc().getSoundManager().play(SimpleSound.forUI(SoundEvents.NOTE_BLOCK_PLING, 1f));
+//                alreadyLoaded = true;
+//            }
+//            
+//        }
+//
+//        lastButton.x = to.width / 2 + 104; lastButton.y = to.height / 4 + 48 + 24;
+//        buttons.add(lastButton);
+//    }
 
     public static void actionPerformed(Screen gui, Button button) {
     	clickedWynncraftButton(((WynncraftButton) button).serverIcon.getServer(), gui);
     }
 
-    //FIXME
+    //FIXME auto updater not working
     private static void clickedWynncraftButton(ServerData server, Screen backGui) {
 //        if (hasUpdate()) {
 //            McIf.mc().setScreen(new UpdateAvailableScreen(server));
@@ -95,62 +96,62 @@ public class MainMenuButtons {
 
         public WynncraftButton(ServerData server, int x, int y, Button.IPressable onPress) {
         	super(x, y, 20, 20, new StringTextComponent("Join Wynncraft"), onPress);
-//            super(buttonId, x, y, 20, 20, "");
 
             serverIcon = new ServerIcon(server, true);
             serverIcon.onDone(r -> serverList.save());
         }
 
-        @Override
-        public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-            if (!visible) return;
-
-            super.renderButton(matrices, mouseX, mouseY, partialTicks);
-
-            ServerIcon.ping();
-            ResourceLocation icon = ServerIcon.getServerIcon();
-            if (icon == null) icon = ServerIcon.UNKNOWN_SERVER;
-            McIf.mc().getTextureManager().bind(icon);
-
+        //TODO needs ServerIcon fixing first
+//        @Override
+//        public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
+//            if (!visible) return;
+//
+//            super.renderButton(matrices, mouseX, mouseY, partialTicks);
+//
+//            ServerIcon.ping();
+//            ResourceLocation icon = ServerIcon.getServerIcon();
+//            if (icon == null) icon = ServerIcon.UNKNOWN_SERVER;
+//            McIf.mc().getTextureManager().bind(icon);
+//
 //            boolean hasUpdate = hasUpdate();
-            boolean hasUpdate = false;
-
-            GlStateManager.pushMatrix();
-
-            GlStateManager.translate(x + 2, y + 2, 0);
-            GlStateManager.scale(0.5f, 0.5f, 0);
-            GlStateManager.enableBlend();
-            blit(matrices, 0, 0, 0.0F, 0.0F, 32, 32, 32, 32);
-            if (!hasUpdate) {
-                GlStateManager.disableBlend();
-            }
-
-            GlStateManager.popMatrix();
-
-            if (hasUpdate) {
-                Textures.UIs.main_menu.bind();
-                // When not provided with the texture size vanilla automatically assumes both the height and width are 256
-                blit(matrices, x, y, 0, 0, 20, 20);
-            }
-
-            GlStateManager.disableBlend();
-        }
+//            boolean hasUpdate = false;
+//
+//            GlStateManager.pushMatrix();
+//
+//            GlStateManager.translate(x + 2, y + 2, 0);
+//            GlStateManager.scale(0.5f, 0.5f, 0);
+//            GlStateManager.enableBlend();
+//            blit(matrices, 0, 0, 0.0F, 0.0F, 32, 32, 32, 32);
+//            if (!hasUpdate) {
+//                GlStateManager.disableBlend();
+//            }
+//
+//            GlStateManager.popMatrix();
+//
+//            if (hasUpdate) {
+//                Textures.UIs.main_menu.bind();
+//                // When not provided with the texture size vanilla automatically assumes both the height and width are 256
+//                blit(matrices, x, y, 0, 0, 20, 20);
+//            }
+//
+//            GlStateManager.disableBlend();
+//        }
 
     }
-
-    public static class FakeGui extends Screen {
-        FakeGui() {
-            doAction();
-        }
-
-        @Override
-        public void init() {
-            doAction();
-        }
-
-        private static void doAction() {
-            clickedWynncraftButton(getWynncraftServerData(), null);
-        }
-    }
+//TODO Dont think this is needed anymore
+//    public static class FakeGui extends Screen {
+//        FakeGui() {
+//            doAction();
+//        }
+//
+//        @Override
+//        public void init() {
+//            doAction();
+//        }
+//
+//        private static void doAction() {
+//            clickedWynncraftButton(getWynncraftServerData(), null);
+//        }
+//    }
 
 }

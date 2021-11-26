@@ -1,5 +1,5 @@
 /*
- *  * Copyright © Wynntils - 2018 - 2021.
+ *  * Copyright Â© Wynntils - 2018 - 2021.
  */
 
 package com.wynntils.modules.utilities.configs;
@@ -19,7 +19,6 @@ import com.wynntils.modules.core.enums.OverlayRotation;
 import com.wynntils.modules.utilities.overlays.hud.ObjectivesOverlay;
 import com.wynntils.modules.utilities.overlays.hud.ScoreboardOverlay;
 import com.wynntils.modules.utilities.overlays.hud.TerritoryFeedOverlay;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 
 @SettingsInfo(name = "overlays", displayPath = "Utilities/Overlays")
@@ -43,11 +42,11 @@ public class OverlayConfig extends SettingsClass {
     public static class Health extends SettingsClass {
         public static Health INSTANCE;
 
-        @Setting(displayName = "Health Bar Width", description = "How wide should the health bar be in pixels?\n\n§8This will be adjusted using Minecraft's scaling.")
+        @Setting(displayName = "Health Bar Width", description = "How wide should the health bar be in pixels?\n\nÂ§8This will be adjusted using Minecraft's scaling.")
         @Setting.Limitations.IntLimit(min = 0, max = 81)
         public int width = 81;
 
-        @Setting(displayName = "Health Bar Orientation", description = "How orientated in degrees should the health bar be?\n\n§8Accompanied text will be removed.")
+        @Setting(displayName = "Health Bar Orientation", description = "How orientated in degrees should the health bar be?\n\nÂ§8Accompanied text will be removed.")
         public OverlayRotation overlayRotation = OverlayRotation.NORMAL;
 
         @Setting(displayName = "Low Health Vignette", description = "Should a red vignette be displayed when you're low on health?")
@@ -64,7 +63,7 @@ public class OverlayConfig extends SettingsClass {
         public HealthTextures healthTexture = HealthTextures.a;
 
         @Setting.Limitations.FloatLimit(min = 0f, max = 10f)
-        @Setting(displayName = "Animation Speed", description = "How fast should the animation be played?\n\n§8Set this to 0 for it to display instantly.")
+        @Setting(displayName = "Animation Speed", description = "How fast should the animation be played?\n\nÂ§8Set this to 0 for it to display instantly.")
         public float animated = 2f;
 
         @Setting(displayName = "Text Shadow", description = "What should the text shadow look like?")
@@ -96,18 +95,18 @@ public class OverlayConfig extends SettingsClass {
     public static class Mana extends SettingsClass {
         public static Mana INSTANCE;
 
-        @Setting(displayName = "Mana Bar Width", description = "How wide should the mana bar be in pixels?\n\n§8This will be adjusted using Minecraft's scaling.")
+        @Setting(displayName = "Mana Bar Width", description = "How wide should the mana bar be in pixels?\n\nÂ§8This will be adjusted using Minecraft's scaling.")
         @Setting.Limitations.IntLimit(min = 0, max = 81)
         public int width = 81;
 
-        @Setting(displayName = "Mana Bar Orientation", description = "How orientated in degrees should the mana bar be?\n\n§8Accompanied text will be removed.")
+        @Setting(displayName = "Mana Bar Orientation", description = "How orientated in degrees should the mana bar be?\n\nÂ§8Accompanied text will be removed.")
         public OverlayRotation overlayRotation = OverlayRotation.NORMAL;
 
         @Setting(displayName = "Mana Texture", description = "What texture should be used for the mana bar?")
         public ManaTextures manaTexture = ManaTextures.a;
 
         @Setting.Limitations.FloatLimit(min = 0f, max = 10f)
-        @Setting(displayName = "Animation Speed", description = "How fast should the animation be played?\n\n§8Set this to 0 for it to display instantly.")
+        @Setting(displayName = "Animation Speed", description = "How fast should the animation be played?\n\nÂ§8Set this to 0 for it to display instantly.")
         public float animated = 2f;
 
         @Setting(displayName = "Text Shadow", description = "What should the text shadow look like?")
@@ -166,7 +165,7 @@ public class OverlayConfig extends SettingsClass {
         @Setting(displayName = "Level Up Messages", description = "Should a toast be displayed to inform that you have leveled up?")
         public boolean enableLevelUp = true;
 
-        @Setting(displayName = "Flip Toast Messages", description = "Should a toast display from the left to right?\n\n§8Some visual glitches may occur if Toast overlay isn't moved to either side of your screen.")
+        @Setting(displayName = "Flip Toast Messages", description = "Should a toast display from the left to right?\n\nÂ§8Some visual glitches may occur if Toast overlay isn't moved to either side of your screen.")
         public boolean flipToast = false;
     }
 
@@ -178,7 +177,7 @@ public class OverlayConfig extends SettingsClass {
         public expTextures expTexture = expTextures.a;
 
         @Setting.Limitations.FloatLimit(min = 0f, max = 10f)
-        @Setting(displayName = "Animation Speed", description = "How fast should the animation be played?\n\n§8Set this to 0 for it to display instantly.")
+        @Setting(displayName = "Animation Speed", description = "How fast should the animation be played?\n\nÂ§8Set this to 0 for it to display instantly.")
         public float animated = 2f;
 
         @Setting(displayName = "Text Shadow", description = "What should the text shadow look like?")
@@ -205,7 +204,7 @@ public class OverlayConfig extends SettingsClass {
         public BubbleTexture bubblesTexture = BubbleTexture.a;
 
         @Setting.Limitations.FloatLimit(min = 0f, max = 10f)
-        @Setting(displayName = "Animation Speed", description = "How fast should the animation be played?\n\n§8Set this to 0 for it to display instantly.")
+        @Setting(displayName = "Animation Speed", description = "How fast should the animation be played?\n\nÂ§8Set this to 0 for it to display instantly.")
         public float animated = 2f;
 
         @Setting(displayName = "Text Shadow", description = "What should the text shadow look like?")
@@ -267,14 +266,14 @@ public class OverlayConfig extends SettingsClass {
         @Setting(displayName = "New Messages Display Prominently", description = "Should new messages appear before old messages in the direction of growth, pushing older messages further away?")
         public boolean newMessagesFirst = false;
 
-        @Setting(displayName = "Max Message Length", description = "What should the maximum length of messages in the game-update-ticker be?\n\n§8Messages longer than this set value will be truncated. Set this to 0 for no maximum length.")
+        @Setting(displayName = "Max Message Length", description = "What should the maximum length of messages in the game-update-ticker be?\n\nÂ§8Messages longer than this set value will be truncated. Set this to 0 for no maximum length.")
         @Setting.Limitations.IntLimit(min = 0, max = 100)
         public int messageMaxLength = 0;
 
         @Setting(displayName = "Text Shadow", description = "What should the text shadow look like?")
         public SmartFontRenderer.TextShadow textShadow = SmartFontRenderer.TextShadow.OUTLINE;
 
-        @Setting(displayName = "New Message Override", description = "Should new messages force out the oldest previous messages?\n\n§8If disabled, ticker messages will be queued and appear when a previous message disappears.")
+        @Setting(displayName = "New Message Override", description = "Should new messages force out the oldest previous messages?\n\nÂ§8If disabled, ticker messages will be queued and appear when a previous message disappears.")
         public boolean overrideNewMessages = true;
 
         @SettingsInfo(name = "game_update_exp_settings", displayPath = "Utilities/Overlays/Update Ticker/Experience")
@@ -379,7 +378,7 @@ public class OverlayConfig extends SettingsClass {
             @Setting(displayName = "Enable Territory Leave", description = "Should territory leave messages be displayed in the game update ticker?")
             public boolean leave = false;
 
-            @Setting(displayName = "Enable Music Change", description = "Should music change messages be displayed in the game update ticker?\n\n§8This has no effect if the Music module is disabled.")
+            @Setting(displayName = "Enable Music Change", description = "Should music change messages be displayed in the game update ticker?\n\nÂ§8This has no effect if the Music module is disabled.")
             public boolean musicChange = true;
 
             @Setting(displayName = "Territory Enter Format", description = "How should the format of the territory enter ticker messages be displayed?")
@@ -395,7 +394,7 @@ public class OverlayConfig extends SettingsClass {
             @Setting(displayName = "Music Change Format", description = "How should the format of the music change ticker messages be displayed?")
             @Setting.Features.StringParameters(parameters = {"np"})
             @Setting.Limitations.StringLimit(maxLength = 100)
-            public String musicChangeFormat = TextFormatting.GRAY + "♫ %np%";
+            public String musicChangeFormat = TextFormatting.GRAY + "â™« %np%";
         }
     }
 
@@ -420,7 +419,7 @@ public class OverlayConfig extends SettingsClass {
 
         @Setting(displayName = "Territory Messages Mode", description = "What messages should be displayed in the territory feed?\n\n" +
                 "Normal: Display all territory messages.\n\n" +
-                "Distinguish Own Guild: Display all territory messages, but messages relating to your guild will be displayed in different colours. (§2Gained territory §r& §4lost territory§r)\n\n" +
+                "Distinguish Own Guild: Display all territory messages, but messages relating to your guild will be displayed in different colours. (Â§2Gained territory Â§r& Â§4lost territoryÂ§r)\n\n" +
                 "Only Own Guild: Display only territory messages that relate to your guild.")
         public TerritoryFeedDisplayMode displayMode = TerritoryFeedDisplayMode.DISTINGUISH_OWN_GUILD;
 
@@ -493,7 +492,7 @@ public class OverlayConfig extends SettingsClass {
         @Setting.Limitations.IntLimit(min = 0, max = 100)
         public int opacity = 0;
 
-        @Setting(displayName = "Background Color", description = "What color should the text shadow be?\n\n§aClick the coloured box to open the colour wheel.", order = 13)
+        @Setting(displayName = "Background Color", description = "What color should the text shadow be?\n\nÂ§aClick the coloured box to open the colour wheel.", order = 13)
         public CustomColor backgroundColor = CustomColor.fromInt(0x000000, 0);
 
         @Setting(displayName = "Text Shadow", description = "What should the text shadow look like?")
@@ -543,7 +542,7 @@ public class OverlayConfig extends SettingsClass {
             PING("Ping", "%ping%ms/15s"),
             BLOCKSPERSECOND("Blocks Per Second", "%bps% bps"),
             BLOCKSPERMINUTE("Blocks Per Minute", "%bpm% bpm"),
-            AREA_DPS("Area Damage Per Second", "Area DPS: ❤ %adps%");
+            AREA_DPS("Area Damage Per Second", "Area DPS: â�¤ %adps%");
 
             public final String displayName;
             public final String value;
@@ -562,8 +561,8 @@ public class OverlayConfig extends SettingsClass {
             E("Emerald (" + EmeraldSymbols.E_STRING + ")", "\\E"),
             EB("EB (" + EmeraldSymbols.B_STRING + ")", "\\B"),
             LE("LE (" + EmeraldSymbols.L_STRING + ")", "\\L"),
-            M("Mana (✺)", "\\M"),
-            H("Heart (❤)", "\\H");
+            M("Mana (âœº)", "\\M"),
+            H("Heart (â�¤)", "\\H");
 
             public final String displayName;
             public final String value;
@@ -706,7 +705,7 @@ public class OverlayConfig extends SettingsClass {
     public static class Objectives extends SettingsClass {
         public static Objectives INSTANCE;
 
-        @Setting(displayName = "Enable Objectives Overlay", description = "Should the sidebar scoreboard be replaced by this overlay?\n\n§8This overlay works best if the scoreboard overlay is enabled as well.", order = 0)
+        @Setting(displayName = "Enable Objectives Overlay", description = "Should the sidebar scoreboard be replaced by this overlay?\n\nÂ§8This overlay works best if the scoreboard overlay is enabled as well.", order = 0)
         public boolean enableObjectives = true;
 
         @Setting(displayName = "Hide on Inactivity", description = "Should the overlay be hidden unless the objective has been updated?", order = 1)
@@ -725,7 +724,7 @@ public class OverlayConfig extends SettingsClass {
         @Setting(displayName = "Objectives Bar Texture", description = "What texture should be used for the objectives bar?")
         public objectivesTextures objectivesTexture = objectivesTextures.a;
 
-        @Setting(displayName = "Text Colour", description = "What colour should the objective text be?\n\n§aClick the coloured box to open the colour wheel.")
+        @Setting(displayName = "Text Colour", description = "What colour should the objective text be?\n\nÂ§aClick the coloured box to open the colour wheel.")
         public CustomColor textColour = CommonColors.GREEN;
 
         @Setting(displayName = "Text Shadow", description = "What should the text shadow look like?")
@@ -769,7 +768,7 @@ public class OverlayConfig extends SettingsClass {
         @Setting.Limitations.IntLimit(min = 0, max = 100)
         public int opacity = 20;
 
-        @Setting(displayName = "Background Color", description = "What color should the text shadow be?\n\n§aClick the coloured box to open the colour wheel.", order = 5)
+        @Setting(displayName = "Background Color", description = "What color should the text shadow be?\n\nÂ§aClick the coloured box to open the colour wheel.", order = 5)
         public CustomColor backgroundColor = CustomColor.fromInt(0x000000, 0.2f);
 
         @Override

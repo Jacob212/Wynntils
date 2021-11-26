@@ -50,10 +50,11 @@ public class UpdateOverlay extends Overlay {
         if (e.getType() != RenderGameOverlayEvent.ElementType.ALL) {
             return;
         }
-
-        if (Reference.developmentEnvironment || WebManager.getUpdate() == null || !WebManager.getUpdate().hasUpdate()) {
-            return;
-        }
+        
+        //FIXME WebManager.getUpdate has been removed.
+//        if (Reference.developmentEnvironment || WebManager.getUpdate() == null || !WebManager.getUpdate().hasUpdate()) {
+//            return;
+//        }
 
         if (disappear) {
             return;
@@ -67,11 +68,11 @@ public class UpdateOverlay extends Overlay {
         drawRect(box, -170, 0 - size, 0, 60 - size);
 
         drawString("Wynntils " + TextFormatting.GREEN + "v" + Reference.VERSION + " - " + TextFormatting.WHITE + (((timeout + 35000) - System.currentTimeMillis()) / 1000) + "s left", -165, 5 - size, CommonColors.ORANGE);
-        if (WebManager.getUpdate().getLatestUpdate().startsWith("B")) {
-            drawString(TextFormatting.YELLOW + "Build " + WebManager.getUpdate().getLatestUpdate().replace("B", "") + TextFormatting.WHITE + " is available.", -165, 15 - size, CommonColors.WHITE);
-        } else {
-            drawString("A new update is available " + TextFormatting.YELLOW + "v" + WebManager.getUpdate().getLatestUpdate(), -165, 15 - size, CommonColors.WHITE);
-        }
+//        if (WebManager.getUpdate().getLatestUpdate().startsWith("B")) {
+//            drawString(TextFormatting.YELLOW + "Build " + WebManager.getUpdate().getLatestUpdate().replace("B", "") + TextFormatting.WHITE + " is available.", -165, 15 - size, CommonColors.WHITE);
+//        } else {
+//            drawString("A new update is available " + TextFormatting.YELLOW + "v" + WebManager.getUpdate().getLatestUpdate(), -165, 15 - size, CommonColors.WHITE);
+//        }
 
         drawString("Download automagically? " + TextFormatting.GREEN + "(y/n)", -165, 25 - size, CommonColors.LIGHT_GRAY);
 
@@ -127,7 +128,9 @@ public class UpdateOverlay extends Overlay {
 
                 DownloadOverlay.size = 0;
                 DownloaderManager.restartGameOnNextQueue();
-                DownloaderManager.queueDownload("Updating to " + WebManager.getUpdate().getLatestUpdate(), url, directory, DownloadAction.SAVE, (x) -> {
+                //FIXME WebManager.getUpdate has been removed
+//                DownloaderManager.queueDownload("Updating to " + WebManager.getUpdate().getLatestUpdate(), url, directory, DownloadAction.SAVE, (x) -> {
+                DownloaderManager.queueDownload("Updating to ", url, directory, DownloadAction.SAVE, (x) -> {
                     if (x) {
                         try {
                             String message = TextFormatting.DARK_AQUA + "An update to Wynntils (";
@@ -174,27 +177,27 @@ public class UpdateOverlay extends Overlay {
             return WebManager.getStableJarFileUrl();
         }
     }
-
+  //TODO jarFile needs setting up again.
     public static void scheduleCopyUpdateAtShutdown(String jarName) {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                Reference.LOGGER.info("Attempting to apply Wynntils update.");
-                File oldJar = ModCore.jarFile;
-
-                if (oldJar == null || !oldJar.exists() || oldJar.isDirectory()) {
-                    Reference.LOGGER.warn("Old jar file not found.");
-                    return;
-                }
-
-                File newJar = new File(new File(Reference.MOD_STORAGE_ROOT, "updates"), jarName);
-                Utils.copyFile(newJar, oldJar);
-                newJar.delete();
-                Reference.LOGGER.info("Successfully applied Wynntils update.");
-            } catch (IOException ex) {
-                Reference.LOGGER.error("Unable to apply Wynntils update.", ex);
-            }
-        }, "wynntils-autoupdate-applier"));
-        WebManager.getUpdate().updateDownloaded();
+//        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+//            try {
+//                Reference.LOGGER.info("Attempting to apply Wynntils update.");
+//                File oldJar = ModCore.jarFile;
+//
+//                if (oldJar == null || !oldJar.exists() || oldJar.isDirectory()) {
+//                    Reference.LOGGER.warn("Old jar file not found.");
+//                    return;
+//                }
+//
+//                File newJar = new File(new File(Reference.MOD_STORAGE_ROOT, "updates"), jarName);
+//                Utils.copyFile(newJar, oldJar);
+//                newJar.delete();
+//                Reference.LOGGER.info("Successfully applied Wynntils update.");
+//            } catch (IOException ex) {
+//                Reference.LOGGER.error("Unable to apply Wynntils update.", ex);
+//            }
+//        }, "wynntils-autoupdate-applier"));
+//        WebManager.getUpdate().updateDownloaded();
     }
 
     public static boolean isDownloading() {

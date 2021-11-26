@@ -18,7 +18,9 @@ import com.wynntils.modules.core.enums.UpdateStream;
 import com.wynntils.webapi.WebManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.text.StringTextComponent;
-import org.lwjgl.input.Mouse;
+//import org.lwjgl.input.Mouse;
+//TODO lwjgl input handler has been changed. now uses GLFW, dont know how the new one works
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -109,7 +111,8 @@ public class ChangelogUI extends Screen {
 
     @Override
     public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
-        drawDefaultBackground();
+    	//FIXME Not sure what this is meant to be using
+//        drawDefaultBackground();
 
         ScreenRenderer.beginGL(0, 0);
 
@@ -154,22 +157,24 @@ public class ChangelogUI extends Screen {
             scrollbarPosition-=4;
         }
     }
-
-    @Override
-    public void handleMouseInput() {
-        int mDWheel = Mouse.getEventDWheel() * CoreDBConfig.INSTANCE.scrollDirection.getScrollDirection();
-
-        if (mDWheel <= -1) {
-            updateScrollbarPosition(true);
-        } else if (mDWheel >= 1) updateScrollbarPosition(false);
-
-    }
+    
+    //TODO not sure where this has been moved too or changed too.
+//    @Override
+//    public void handleMouseInput() {
+//        int mDWheel = Mouse.getEventDWheel() * CoreDBConfig.INSTANCE.scrollDirection.getScrollDirection();
+//
+//        if (mDWheel <= -1) {
+//            updateScrollbarPosition(true);
+//        } else if (mDWheel >= 1) updateScrollbarPosition(false);
+//
+//    }
 
     @Override
     public boolean keyPressed(int charType, int keyCode, int j) {
         if (keyCode == 1) {  // ESC
             McIf.mc().setScreen(previousGui);
-            if (McIf.mc().screen == null) McIf.mc().setIngameFocus();
+            //TODO cant find setIngameFocus in Minecarft object
+//            if (McIf.mc().screen == null) McIf.mc().setIngameFocus();
             return true;
         }
         return false;

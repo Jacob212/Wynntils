@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import java.io.IOException;
 import java.util.List;
 
+
 public class InventoryReplacer extends InventoryScreen {
 
     PlayerEntity player;

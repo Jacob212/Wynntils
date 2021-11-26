@@ -197,12 +197,13 @@ public class FakeInventory {
     // detects the GUI open, and gatters information
     @SubscribeEvent
     public void onInventoryReceive(PacketEvent<SOpenWindowPacket> e) {
-        if (!e.getPacket().getGuiId().equalsIgnoreCase("minecraft:container") || !e.getPacket().hasSlots()) {
-            close(InventoryResult.CLOSED_OVERLAP);
-            return;
-        }
+    	//FIXME changed container info
+//        if (!e.getPacket().getContainerId().equalsIgnoreCase("minecraft:container") || !e.getPacket().hasSlots()) {
+//            close(InventoryResult.CLOSED_OVERLAP);
+//            return;
+//        }
 
-        if (!expectedWindowTitle.matcher(McIf.getTextWithoutFormattingCodes(McIf.getUnformattedText(e.getPacket().getWindowTitle()))).matches()) {
+        if (!expectedWindowTitle.matcher(McIf.getTextWithoutFormattingCodes(McIf.getUnformattedText(e.getPacket().getTitle()))).matches()) {
             close(InventoryResult.CLOSED_OVERLAP);
             return;
         }
@@ -212,7 +213,7 @@ public class FakeInventory {
         lastAction = McIf.getSystemTime();
 
         windowId = e.getPacket().getContainerId();
-        windowTitle = McIf.getUnformattedText(e.getPacket().getWindowTitle());
+        windowTitle = McIf.getUnformattedText(e.getPacket().getTitle());
         inventory = NonNullList.create();
 
         e.setCanceled(true);
@@ -245,7 +246,7 @@ public class FakeInventory {
             return;
         }
 
-        McIf.mc().getConnection().send(new CConfirmTransactionPacket(windowId, e.getPacket().getActionNumber(), true));
+        McIf.mc().getConnection().send(new CConfirmTransactionPacket(windowId, e.getPacket().getUid(), true));
         e.setCanceled(true);
     }
 

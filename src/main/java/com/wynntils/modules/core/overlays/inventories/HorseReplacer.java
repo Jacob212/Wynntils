@@ -19,6 +19,8 @@ import net.minecraft.item.ItemStack;
 import java.io.IOException;
 import java.util.List;
 
+//FIXME Need to find new extend, ChestScreen is now the wrong one? maybe
+//Or the inventory types need to change below
 public class HorseReplacer extends HorseInventoryScreen  {
 
     IInventory lowerInv, upperInv;

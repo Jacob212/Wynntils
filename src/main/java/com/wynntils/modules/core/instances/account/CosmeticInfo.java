@@ -32,14 +32,15 @@ public class CosmeticInfo extends Texture {
     }
 
     @Override
-    public int getGlTextureId() {
+    public int getId() {
         if (image == null) { // this is here because uploadTexture requires an opengl container
             byte[] textureBytes = Base64.getDecoder().decode(texture);
             ByteArrayInputStream stream = new ByteArrayInputStream(textureBytes);
 
             try {
-                image = TextureUtil.readBufferedImage(stream);
-                TextureUtil.uploadTextureImage(super.getGlTextureId(), image);
+            	//TODO BufferedImage change, doesnt work
+//                image = TextureUtil.readResource(stream);
+//                TextureUtil.uploadTextureImage(super.getId(), image);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -47,7 +48,7 @@ public class CosmeticInfo extends Texture {
             texture = null; // clean some useless space
         }
 
-        return super.getGlTextureId();
+        return super.getId();
     }
 
     @Override
