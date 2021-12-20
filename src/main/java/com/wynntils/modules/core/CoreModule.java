@@ -29,16 +29,13 @@ public class CoreModule extends Module {
 
         registerSettings(CoreDBConfig.class);
 
-//TODO find out if this is fine
-//Commands are now registered in modules.core.events.ClientEvents
-//Not if that is the correct place for them but it works
-//        registerCommand(new CommandAdmin());
-//        registerCommand(new CommandCompass());
-//        registerCommand(new CommandForceUpdate());
+        registerCommand(new CommandAdmin());
+        registerCommand(new CommandCompass());
+        registerCommand(new CommandForceUpdate());
 //        registerCommand(new CommandServer());
-//        registerCommand(new CommandTerritory());
-//        registerCommand(new CommandToken());
-//        registerCommand(new CommandWynntils());
+        registerCommand(new CommandTerritory());
+        registerCommand(new CommandToken());
+        registerCommand(new CommandWynntils());
 
         TabManager.replaceTabOrderer();
 

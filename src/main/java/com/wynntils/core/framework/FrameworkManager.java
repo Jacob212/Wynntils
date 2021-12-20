@@ -4,15 +4,16 @@
 
 package com.wynntils.core.framework;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.wynntils.McIf;
+import com.wynntils.ModCore;
 import com.wynntils.Reference;
 import com.wynntils.core.events.custom.WynncraftServerEvent;
-import com.wynntils.core.framework.entities.EntityManager;
-import com.wynntils.core.framework.entities.interfaces.EntitySpawnCodition;
 import com.wynntils.core.framework.enums.Priority;
 import com.wynntils.core.framework.instances.KeyHolder;
 import com.wynntils.core.framework.instances.Module;
 import com.wynntils.core.framework.instances.containers.ModuleContainer;
+import com.wynntils.core.framework.interfaces.ICommand;
 import com.wynntils.core.framework.interfaces.Listener;
 import com.wynntils.core.framework.interfaces.annotations.ModuleInfo;
 import com.wynntils.core.framework.overlays.Overlay;
@@ -20,16 +21,23 @@ import com.wynntils.core.framework.rendering.ScreenRenderer;
 import com.wynntils.core.framework.settings.SettingsContainer;
 import com.wynntils.core.framework.settings.annotations.SettingsInfo;
 import com.wynntils.core.framework.settings.instances.SettingsHolder;
+import com.wynntils.core.framework.entities.EntityManager;
+import com.wynntils.core.framework.entities.interfaces.EntitySpawnCodition;
 import com.wynntils.core.utils.Utils;
 import com.wynntils.core.utils.objects.Location;
 import com.wynntils.core.utils.reflections.ReflectionFields;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.command.CommandSource;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.EventBus;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
-
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import org.apache.logging.log4j.LogManager;
 
@@ -42,8 +50,9 @@ public class FrameworkManager {
     protected final static Map<String, ModuleContainer> availableModules = new HashMap<>();
     protected final static Map<Priority, List<Overlay>> registeredOverlays = new LinkedHashMap<>();
     protected final static Set<EntitySpawnCodition> registeredSpawnConditions = new HashSet<>();
+    protected final static Set<ICommand> registeredCommands = new HashSet<>();
 
-    private static final EventBus eventBus = new EventBus(null);
+    public static final IEventBus eventBus = BusBuilder.builder().startShutdown().build();
 
     static {
         registeredOverlays.put(Priority.LOWEST, new ArrayList<>());
@@ -112,6 +121,12 @@ public class FrameworkManager {
         return holder;
     }
 
+    public static void triggerCommandsRegister(CommandDispatcher<CommandSource> dispatcher) {
+    	for (ICommand command : registeredCommands) {
+            command.register(dispatcher);
+        }
+    }
+    
     public static void reloadSettings() {
         availableModules.values().forEach(ModuleContainer::reloadSettings);
     }
@@ -140,6 +155,15 @@ public class FrameworkManager {
             ReflectionFields.Event_phase.setValue(e, null);
             eventBus.post(e);
         }
+    }
+
+    public static void registerCommand(Module module, ICommand command) {
+    	ModuleInfo info = module.getClass().getAnnotation(ModuleInfo.class);
+        if (info == null) {
+            return;
+        }
+        
+    	registeredCommands.add(command);
     }
 
     public static void triggerPreHud(RenderGameOverlayEvent.Pre e) {
@@ -266,7 +290,7 @@ public class FrameworkManager {
         return availableModules;
     }
 
-    public static EventBus getEventBus() {
+    public static IEventBus getEventBus() {
         return eventBus;
     }
 

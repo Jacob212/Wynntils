@@ -37,6 +37,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -223,7 +224,7 @@ public class ClientEvents {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onTick(TickEvent.ClientTickEvent e) {
+    public static void onTick(TickEvent.ClientTickEvent e) {
         if (e.phase != TickEvent.Phase.END) return;
 
         ScreenRenderer.refresh();
@@ -234,6 +235,11 @@ public class ClientEvents {
         FrameworkManager.triggerNaturalSpawn();
     }
 
+    @SubscribeEvent
+    public static void onRegisterCommandEvent(RegisterCommandsEvent event) {
+    	FrameworkManager.triggerCommandsRegister(event.getDispatcher());
+    }
+    
     @SubscribeEvent
     public static void onWorldLeave(GuiOpenEvent e) {
         if (Reference.onServer && e.getGui() instanceof DisconnectedScreen) {

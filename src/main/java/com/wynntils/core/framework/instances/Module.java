@@ -7,11 +7,10 @@ package com.wynntils.core.framework.instances;
 import com.wynntils.core.framework.FrameworkManager;
 import com.wynntils.core.framework.entities.interfaces.EntitySpawnCodition;
 import com.wynntils.core.framework.enums.Priority;
+import com.wynntils.core.framework.interfaces.ICommand;
 import com.wynntils.core.framework.interfaces.Listener;
 import com.wynntils.core.framework.overlays.Overlay;
 import com.wynntils.core.framework.settings.instances.SettingsHolder;
-import com.wynntils.transition.ICommand;
-import com.wynntils.transition.ClientCommandHandler;
 import net.minecraftforge.client.settings.IKeyConflictContext;
 import org.apache.logging.log4j.Logger;
 
@@ -131,7 +130,7 @@ public abstract class Module {
      * @param command the ClientCommand instance
      */
     public void registerCommand(ICommand command) {
-        ClientCommandHandler.instance.registerCommand(command);
+    	FrameworkManager.registerCommand(this, command);
     }
 
     public Logger getLogger() {

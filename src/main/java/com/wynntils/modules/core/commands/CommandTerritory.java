@@ -4,117 +4,85 @@
 
 package com.wynntils.modules.core.commands;
 
+import java.util.Collection;
+import java.util.Optional;
+
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.wynntils.McIf;
+import com.wynntils.core.framework.interfaces.ICommand;
 import com.wynntils.core.utils.objects.Location;
 import com.wynntils.modules.core.managers.CompassManager;
 import com.wynntils.webapi.WebManager;
 import com.wynntils.webapi.profiles.TerritoryProfile;
-import net.minecraft.client.Minecraft;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.client.IClientCommand;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+public class CommandTerritory implements ICommand {
+	public void register(CommandDispatcher<CommandSource> dispatcher) {
+		LiteralArgumentBuilder<CommandSource> commandTerritory = Commands.literal("territory")
+				.requires((command) -> {
+					return command.hasPermission(0);
+				});
+		
+		commandTerritory.then(Commands.argument("territory_name", StringArgumentType.greedyString()).suggests(SUGGEST_TERRITORY).executes((command) -> {
+			return execute(command, StringArgumentType.getString(command, "territory_name"));
+		}));
+		
+		commandTerritory.executes((command) -> {
+			StringTextComponent output = new StringTextComponent("Use: /territory <territory name>");
+			output.withStyle(TextFormatting.RED);
+			command.getSource().sendSuccess(output, false);
+			return 1;
+		});
+		
+		dispatcher.register(commandTerritory);
+	}
+	
+	private static final SuggestionProvider<CommandSource> SUGGEST_TERRITORY = (command, builder) -> {
+		Collection<TerritoryProfile> territories = WebManager.getTerritories().values();
+		return ISuggestionProvider.suggest(territories.stream().map(TerritoryProfile::getFriendlyName), builder);
+	};
+	
+	private static int execute(CommandContext<CommandSource> commandContext, String territory) {      
+	
+	      McIf.player().playSound(SoundEvents.PLAYER_LEVELUP, 1.0f, 10.0f);
+	      
+	      Collection<TerritoryProfile> territories = WebManager.getTerritories().values();
 
-public class CommandTerritory extends CommandBase implements IClientCommand {
-
-    @Override
-    public boolean allowUsageWithoutPrefix(ICommandSender sender, String message) {
-        return false;
-    }
-
-    @Override
-    public String getName() {
-        return "territory";
-    }
-
-    @Override
-    public String getUsage(ICommandSender sender) {
-        return "Redirects your compass to a territory";
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if (args.length <= 0) {
-            McIf.player().play(SoundEvents.BLOCK_ANVIL_PLACE, 1.0f, 1.0f);
-
-            throw new WrongUsageException("/territory [name] | Ex: /territory Detlas");
-        }
-
-        String territoryName;
-        if (args.length == 1) {
-            territoryName = args[0].replace('_', ' ');
-        } else {
-            territoryName = StringUtils.join(args, " ");
-        }
-        String finalTerritoryName = territoryName;
-        Collection<TerritoryProfile> territories = WebManager.getTerritories().values();
-
-        Optional<TerritoryProfile> selectedTerritory = territories.stream().filter(c -> c.getFriendlyName().equalsIgnoreCase(finalTerritoryName)).findFirst();
-        if (!selectedTerritory.isPresent()) {
-            McIf.player().play(SoundEvents.BLOCK_ANVIL_PLACE, 1.0f, 1.0f);
-
-            throw new CommandException("Invalid territory! Use: /territory [name] | Ex: /territory Detlas");
-        }
-
-        McIf.player().play(SoundEvents.ENTITY_PLAYER_LEVELUP, 1.0f, 10.0f);
-
-        TerritoryProfile tp = selectedTerritory.get();
-
-        int xMiddle = tp.getStartX() + ((tp.getEndX() - tp.getStartX())/2);
-        int zMiddle = tp.getStartZ() + ((tp.getEndZ() - tp.getStartZ())/2);
-
-        CompassManager.setCompassLocation(new Location(xMiddle, 0, zMiddle));  // update compass location
-
-        StringTextComponent success = new StringTextComponent("The compass is now pointing towards " + territoryName + " (" + xMiddle + ", " + zMiddle + ")");
-        success.getStyle().setColor(TextFormatting.GREEN);
-
-        StringTextComponent warn = new StringTextComponent("\nPlease be sure you know that this command redirects your compass to the middle of the territory.");
-        warn.getStyle().setColor(TextFormatting.AQUA);
-
-        success.appendSibling(warn);
-
-        StringTextComponent separator = new StringTextComponent("-----------------------------------------------------");
-        separator.getStyle().setColor(TextFormatting.DARK_GRAY).setStrikethrough(true);
-
-        sender.sendMessage(separator);
-        sender.sendMessage(success);
-        sender.sendMessage(separator);
-    }
-
-    @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
-        if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, WebManager.getTerritories().values().stream().map((territoryProfile) ->
-                territoryProfile.getFriendlyName().replace(' ', '_')
-            ).collect(Collectors.toList()));
-        } else if (args.length > 1) {
-            String temp = String.join(" ", args).toLowerCase();
-            List<String> result = getListOfStringsMatchingLastWord(args, WebManager.getTerritories().values().stream().map(territoryProfile -> {
-                if (args.length <= territoryProfile.getFriendlyName().split(" ").length && territoryProfile.getFriendlyName().toLowerCase().startsWith(temp)) {
-                    return territoryProfile.getFriendlyName().split(" ")[args.length - 1];
-                }
-                return "";
-            }).collect(Collectors.toList()));
-            result.removeAll(Arrays.asList("", null));
-            return result.stream().distinct().collect(Collectors.toList());
-        }
-
-        return Collections.emptyList();
-    }
-
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
-
+	      Optional<TerritoryProfile> selectedTerritory = territories.stream().filter(c -> c.getFriendlyName().equalsIgnoreCase(territory)).findFirst();
+	      if (!selectedTerritory.isPresent()) {
+	            McIf.player().playSound(SoundEvents.ANVIL_PLACE, 1.0f, 1.0f);
+	            commandContext.getSource().sendFailure(new StringTextComponent("Invalid territory! Use: /territory [name] | Ex: /territory Detlas"));
+	            return 0;
+	        }
+	      TerritoryProfile territoryProfile = selectedTerritory.get();
+	      int xMiddle = territoryProfile.getStartX() + ((territoryProfile.getEndX() - territoryProfile.getStartX())/2);
+	      int zMiddle = territoryProfile.getStartZ() + ((territoryProfile.getEndZ() - territoryProfile.getStartZ())/2);
+	
+	      CompassManager.setCompassLocation(new Location(xMiddle, 0, zMiddle));  // update compass location
+	
+	      StringTextComponent success = new StringTextComponent("The compass is now pointing towards " + territoryProfile.getFriendlyName() + " (" + xMiddle + ", " + zMiddle + ")");
+	      success.withStyle(TextFormatting.GREEN);
+	
+	      StringTextComponent warn = new StringTextComponent("\nPlease be sure you know that this command redirects your compass to the middle of the territory.");
+	      warn.withStyle(TextFormatting.AQUA);
+	
+	      success.append(warn);
+	
+	      StringTextComponent separator = new StringTextComponent("-----------------------------------------------------");
+	      separator.withStyle(TextFormatting.DARK_GRAY, TextFormatting.STRIKETHROUGH);
+	
+	      commandContext.getSource().sendSuccess(separator, false);
+	      commandContext.getSource().sendSuccess(success, false);
+	      commandContext.getSource().sendSuccess(separator, false);
+	      return 1;
+	  }
 }
