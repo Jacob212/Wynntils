@@ -7,8 +7,11 @@ package com.wynntils.core.utils.reflections;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import com.wynntils.ModCore;
 
 public enum ReflectionMethods {
 
@@ -18,9 +21,23 @@ public enum ReflectionMethods {
 
     final Method method;
 
-    ReflectionMethods(Class<?> holdingClass, String deobf, String obf, Class<?>... parameterTypes) {
-        // FIXME: this only works for SRG names! Not in dev mode
-        this.method = ObfuscationReflectionHelper.findMethod(holdingClass, obf, parameterTypes);
+    ReflectionMethods(Class<?> holdingClass, String unobfName, String srgname, Class<?>... parameterTypes) {
+    	//FIXME hacky fix too not knowing all srg names
+    	//havent tested this yet, should work tho
+    	if (srgname != null) {//if srg name is given, this fast look up is used
+    		this.method = ObfuscationReflectionHelper.findMethod(holdingClass, srgname, parameterTypes);
+    		
+    	} else {//if no srg name is given, then longer lookup is user but they pretty much do the same thing.
+    		Method[] methods = holdingClass.getDeclaredMethods();
+        	for (Method temp: methods) {
+        		if (temp.getName() == unobfName) {
+        			this.method = temp;
+        			this.method.setAccessible(true);
+        			return;
+        		}
+        	}
+        	this.method = null;
+    	}
     }
 
     public Object invoke(Object obj, Object... parameters) {
