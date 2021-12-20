@@ -427,9 +427,10 @@ public class GuiOverlapEvent<T extends AbstractGui> extends Event {
 
         public static class MouseClicked extends ChestOverlap {
 
-            int mouseX, mouseY, mouseButton;
+            double mouseX, mouseY;
+            int mouseButton;
 
-            public MouseClicked(ChestReplacer guiChest, int mouseX, int mouseY, int mouseButton) {
+            public MouseClicked(ChestReplacer guiChest, double mouseX, double mouseY, int mouseButton) {
                 super(guiChest);
 
                 this.mouseX = mouseX; this.mouseY = mouseY; this.mouseButton = mouseButton;
@@ -440,11 +441,11 @@ public class GuiOverlapEvent<T extends AbstractGui> extends Event {
                 return true;
             }
 
-            public int getMouseY() {
+            public double getMouseY() {
                 return mouseY;
             }
 
-            public int getMouseX() {
+            public double getMouseX() {
                 return mouseX;
             }
 
