@@ -28,15 +28,14 @@ public enum ReflectionMethods {
     		this.method = ObfuscationReflectionHelper.findMethod(holdingClass, srgname, parameterTypes);
     		
     	} else {//if no srg name is given, then longer lookup is user but they pretty much do the same thing.
-    		Method[] methods = holdingClass.getDeclaredMethods();
-        	for (Method temp: methods) {
-        		if (temp.getName() == unobfName) {
-        			this.method = temp;
-        			this.method.setAccessible(true);
-        			return;
-        		}
-        	}
-        	this.method = null;
+    		Method temp = null;
+    		try {
+    			temp = holdingClass.getDeclaredMethod(unobfName);
+    		} catch (NoSuchMethodException e) {
+    			e.printStackTrace();
+    		}
+    		this.method = temp;
+    		this.method.setAccessible(true);
     	}
     }
 

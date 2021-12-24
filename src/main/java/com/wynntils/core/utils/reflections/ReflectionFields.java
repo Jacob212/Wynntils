@@ -10,11 +10,13 @@ import net.minecraft.client.gui.IngameGui;
 import net.minecraft.client.gui.overlay.PlayerTabOverlayGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.inventory.ChestScreen;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.screen.inventory.HorseInventoryScreen;
 //import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.network.play.client.CClientSettingsPacket;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -27,19 +29,21 @@ import com.wynntils.ModCore;
 
 public enum ReflectionFields {
     // FIXME: All of these filds are likely incorrect...
-//    GuiChest_lowerChestInventory(ChestScreen.class, "lowerChestInventory", "field_147015_w"),//FIXME doesnt work
-    Entity_CUSTOM_NAME(Entity.class, "CUSTOM_NAME", "field_184242_az"),
-    Entity_CUSTOM_NAME_VISIBLE(Entity.class, "CUSTOM_NAME_VISIBLE", "field_184233_aA"),
+	// FIXME: find srg names of values correctly set to null
+	//this works while set to null but will probs run faster with srg names
+	ContainerScreen_Menu(ContainerScreen.class, "menu", null),
+    Entity_CUSTOM_NAME(Entity.class, "DATA_CUSTOM_NAME", null),
+    Entity_CUSTOM_NAME_VISIBLE(Entity.class, "DATA_CUSTOM_NAME_VISIBLE", "field_184233_aA"),
     ItemFrameEntity_ITEM(ItemFrameEntity.class, "DATA_ITEM", "field_184525_c"),
     Event_phase(Event.class, "phase", null),
     GuiScreen_buttonList(Screen.class, "buttons", "field_230710_m_"),
     HorseInventoryScreen_horseEntity(HorseInventoryScreen.class, "horseEntity", "field_147034_x"),
-    HorseInventoryScreen_horseInventory(HorseInventoryScreen.class, "horseInventory", null),
+    HorseInventoryScreen_horseInventory(AbstractHorseEntity.class, "inventory", null),
     IngameGui_persistantChatGUI(IngameGui.class, "persistantChatGUI", "field_73840_e"),
     IngameGui_remainingHighlightTicks(IngameGui.class, "remainingHighlightTicks", "field_92017_k"),
     IngameGui_highlightingItemStack(IngameGui.class, "highlightingItemStack", "field_92016_l"),
     IngameGui_displayedSubTitle(IngameGui.class, "displayedSubTitle", "field_175200_y"),
-    // FIXME: protected final PlayerTabOverlayGui tabList;
+//     FIXME: protected final PlayerTabOverlayGui tabList;
     IngameGui_overlayPlayerList(IngameGui.class, "overlayPlayerList", "field_175196_v"),
     GuiChat_defaultInputFieldText(ChatScreen.class, "defaultInputFieldText", "field_146409_v"),
     PlayerTabOverlayGui_ENTRY_ORDERING(PlayerTabOverlayGui.class, "PLAYER_ORDERING", null),
@@ -60,16 +64,16 @@ public enum ReflectionFields {
     	//FIXME hacky fix too not knowing all srg names
     	if (srgName != null) {//if srg name is given, this fast look up is used
     		this.field = ObfuscationReflectionHelper.findField(holdingClass, srgName);
+    		
     	} else {//if no srg name is given, then longer lookup is user but they pretty much do the same thing.
-    		Field[] fields = holdingClass.getDeclaredFields();
-        	for (Field temp: fields) {
-        		if (temp.getName() == unobfName) {
-        			this.field = temp;
-        			this.field.setAccessible(true);
-        			return;
-        		}
-        	}
-        	this.field = null;
+    		Field temp = null;
+    		try {
+    			temp = holdingClass.getDeclaredField(unobfName);
+    		} catch (NoSuchFieldException e) {
+    			e.printStackTrace();
+    		}
+    		this.field = temp;
+    		this.field.setAccessible(true);
     	}
     }
 
