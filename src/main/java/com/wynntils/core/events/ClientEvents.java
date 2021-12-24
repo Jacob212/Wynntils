@@ -37,7 +37,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -79,6 +78,8 @@ public class ClientEvents {
     public static void onServerJoin(ClientPlayerNetworkEvent.LoggedInEvent e) {
         setLoadingStatusMsg("Connected...");
         Reference.setUserWorld(null);
+        
+        FrameworkManager.triggerCommandsRegister();
 
         if (Reference.onServer) MinecraftForge.EVENT_BUS.post(new WynncraftServerEvent.Login());
     }
@@ -233,11 +234,6 @@ public class ClientEvents {
         FrameworkManager.triggerHudTick(e);
         FrameworkManager.triggerKeyPress();
         FrameworkManager.triggerNaturalSpawn();
-    }
-
-    @SubscribeEvent
-    public static void onRegisterCommandEvent(RegisterCommandsEvent event) {
-    	FrameworkManager.triggerCommandsRegister(event.getDispatcher());
     }
     
     @SubscribeEvent
