@@ -4,7 +4,9 @@
 
 package com.wynntils.core.framework;
 
+import com.ibm.icu.impl.Pair;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.wynntils.McIf;
 import com.wynntils.ModCore;
 import com.wynntils.Reference;
@@ -30,18 +32,17 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.command.CommandSource;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.EventBus;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static net.minecraft.client.gui.screen.Screen.GUI_ICONS_LOCATION;
 
@@ -53,6 +54,8 @@ public class FrameworkManager {
     protected final static Set<ICommand> registeredCommands = new HashSet<>();
 
     public static final IEventBus eventBus = BusBuilder.builder().startShutdown().build();
+    
+    public static final CommandDispatcher<CommandSource> dispatcher = new CommandDispatcher();
 
     static {
         registeredOverlays.put(Priority.LOWEST, new ArrayList<>());
@@ -120,11 +123,14 @@ public class FrameworkManager {
         availableModules.get(info.name()).registerKeyBinding(holder);
         return holder;
     }
-
-    public static void triggerCommandsRegister(CommandDispatcher<CommandSource> dispatcher) {
-    	for (ICommand command : registeredCommands) {
-            command.register(dispatcher);
+    
+    public static void registerCommand(Module module, ICommand command) {
+    	ModuleInfo info = module.getClass().getAnnotation(ModuleInfo.class);
+        if (info == null) {
+            return;
         }
+        
+    	registeredCommands.add(command);
     }
     
     public static void reloadSettings() {
@@ -144,7 +150,33 @@ public class FrameworkManager {
             c.getModule().onDisable(); c.unregisterAllEvents();
         });
     }
+    
+    public static void setupCommands(InterModProcessEvent e) {
+    	e.getIMCStream("register_command"::equals)
+        .map(message -> Pair.of(message.getSenderModId(), message.getMessageSupplier().get()))
+        .filter(command -> command.second instanceof LiteralArgumentBuilder<?>)
+        .map(command -> Pair.of(command.first, (LiteralArgumentBuilder<CommandSource>) command.second))
+        .forEachOrdered(command -> {
+        	ModCore.LOGGER.debug("Registering client command '{1}' for '{0}'", command.first, command.second.getLiteral());
+			dispatcher.register(command.second);
+        });;
+        
+        e.getIMCStream("reigster_command"::equals)
+        .map(message -> Pair.of(message.getSenderModId(), message.getMessageSupplier().get()))
+        .filter(command -> command.second instanceof Consumer<?>)
+        .map(command -> Pair.of(command.first, (Consumer<CommandDispatcher<CommandSource>>) command.second))
+        .forEachOrdered(command -> {
+        	ModCore.LOGGER.debug("Calling command registry callback for '{0}'", command.first);
+        	command.second.accept(dispatcher);
+        });;
+    }
 
+    public static void triggerCommandsRegister() {
+    	for (ICommand command : registeredCommands) {
+            command.register(dispatcher);
+        }
+    }
+    
     public static void triggerEvent(Event e) {
         if (
                 Reference.onServer
@@ -155,15 +187,6 @@ public class FrameworkManager {
             ReflectionFields.Event_phase.setValue(e, null);
             eventBus.post(e);
         }
-    }
-
-    public static void registerCommand(Module module, ICommand command) {
-    	ModuleInfo info = module.getClass().getAnnotation(ModuleInfo.class);
-        if (info == null) {
-            return;
-        }
-        
-    	registeredCommands.add(command);
     }
 
     public static void triggerPreHud(RenderGameOverlayEvent.Pre e) {
