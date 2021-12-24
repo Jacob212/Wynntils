@@ -10,26 +10,27 @@ import com.wynntils.core.framework.FrameworkManager;
 import net.minecraft.client.gui.screen.inventory.ChestScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ChestContainer;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
 
 import java.io.IOException;
 import java.util.List;
 
-//FIXME Need to find new extend, ChestScreen is now the wrong one? maybe
-//Or the inventory types need to change below
 public class ChestReplacer extends ChestScreen {
+    
+	IInventory lowerInv;
+	IInventory upperInv;
 
-    IInventory lowerInv;
-    IInventory upperInv;
-
-    public ChestReplacer(IInventory upperInv, IInventory lowerInv) {
-        super(upperInv, lowerInv);
+    public ChestReplacer(ChestContainer upperInv, IInventory lowerInv, ITextComponent title) {
+        super(upperInv, (PlayerInventory) lowerInv, title);
 
         this.lowerInv = lowerInv;
-        this.upperInv = upperInv;
+        this.upperInv = upperInv.getContainer();
     }
 
     public IInventory getLowerInv() {
@@ -69,22 +70,23 @@ public class ChestReplacer extends ChestScreen {
             return super.mouseDragged(mouseX, mouseY, mouseButton, d1, d2);
         return false;
     }
+    //TODO handleMouseInput has been removed,
+    //find out if HandleMouseInput event is used anywhere.
+//    @Override
+//    public void handleMouseInput() throws IOException {
+//        if (!FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.HandleMouseInput(this)))
+//            super.handleMouseInput();
+//    }
 
     @Override
-    public void handleMouseInput() throws IOException {
-        if (!FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.HandleMouseInput(this)))
-            super.handleMouseInput();
-    }
-
-    @Override
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    public void renderLabels(MatrixStack matrix, int mouseX, int mouseY) {
+        super.renderLabels(matrix, mouseX, mouseY);
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.DrawGuiContainerForegroundLayer(this, mouseX, mouseY));
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrix, partialTicks, mouseX, mouseY);
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.DrawGuiContainerBackgroundLayer(this, mouseX, mouseY));
     }
 
@@ -96,21 +98,21 @@ public class ChestReplacer extends ChestScreen {
     }
 
     @Override
-    public void renderHoveredToolTip(int x, int y) {
+    public void renderTooltip(MatrixStack stack, int x, int y) {
         if (FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.HoveredToolTip.Pre(this, x, y))) return;
 
-        super.renderHoveredToolTip(x, y);
+        super.renderTooltip(stack, x, y);
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.HoveredToolTip.Post(this, x, y));
     }
-
+    
     @Override
-    public void renderToolTip(ItemStack stack, int x, int y) {
-        super.renderToolTip(stack, x, y);
+    public void renderTooltip(MatrixStack matrix, ItemStack stack, int x, int y) {
+        super.renderTooltip(matrix, stack, x, y);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton)  {
-        if (FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.MouseClicked(this, mouseX, mouseY, mouseButton))) return;
+        if (FrameworkManager.getEventBus().post(new GuiOverlapEvent.ChestOverlap.MouseClicked(this, mouseX, mouseY, mouseButton))) return true;
         return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 

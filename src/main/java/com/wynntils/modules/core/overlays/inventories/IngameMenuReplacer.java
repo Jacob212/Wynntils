@@ -9,29 +9,36 @@ import com.wynntils.core.events.custom.GuiOverlapEvent;
 import com.wynntils.core.framework.FrameworkManager;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.client.gui.screen.IngameMenuScreen;
 
 import java.io.IOException;
 import java.util.List;
 
-//FIXME Need to find new extend, ChestScreen is now the wrong one? maybe
-//Or the inventory types need to change below
 public class IngameMenuReplacer extends IngameMenuScreen {
 
-    @Override
+	//TODO might not be right
+    public IngameMenuReplacer(boolean p_i51519_1_) {
+		super(p_i51519_1_);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
     public void init() {
         super.init();
 
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.IngameMenuOverlap.InitGui(this, buttons));
     }
 
-    @Override
-    public void actionPerformed(Button btn) throws IOException {
-        if (FrameworkManager.getEventBus().post(new GuiOverlapEvent.IngameMenuOverlap.ActionPerformed(this, btn))) {
-            return;
-        }
-        super.actionPerformed(btn);
-    }
+	//actionPerformed is no longer a thing
+	//TODO find a new way to post the event when a button is pressed
+//    @Override
+//    public void actionPerformed(Button btn) throws IOException {
+//        if (FrameworkManager.getEventBus().post(new GuiOverlapEvent.IngameMenuOverlap.ActionPerformed(this, btn))) {
+//            return;
+//        }
+//        super.actionPerformed(btn);
+//    }
 
     @Override
     public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks) {
@@ -49,8 +56,8 @@ public class IngameMenuReplacer extends IngameMenuScreen {
     }
 
     @Override
-    public void drawHoveringText(String text, int x, int y) {
-        super.drawHoveringText(text, x, y);
+    public void renderTooltip(MatrixStack stack, ITextComponent text, int x, int y) {
+        super.renderTooltip(stack, text, x, y);
     }
 
     public List<Widget> getButtonList() {

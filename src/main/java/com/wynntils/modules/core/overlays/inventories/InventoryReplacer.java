@@ -49,47 +49,47 @@ public class InventoryReplacer extends InventoryScreen {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    public void renderLabels(MatrixStack matrix, int mouseX, int mouseY) {
+        super.renderLabels(matrix, mouseX, mouseY);
 
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.DrawGuiContainerForegroundLayer(this, mouseX, mouseY));
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(matrix, partialTicks, mouseX, mouseY);
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.DrawGuiContainerBackgroundLayer(this, mouseX, mouseY));
     }
 
     @Override
     public boolean keyPressed(int typedChar, int keyCode, int j) {
-        if (!FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.KeyTyped(this, typedChar, keyCode)))
+        if (!FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.KeyTyped(this, (char) typedChar, keyCode)))
             return super.keyPressed(typedChar, keyCode, j);
         return false;
     }
+//TODO actionPerformed has been removed, buttons don't work like this anymore
+//    @Override
+//    public void actionPerformed(Button guiButton) throws IOException {
+//        if (guiButton.id == 10) {
+//            QuestBookPages.MAIN.getPage().open(true);
+//            return;
+//        }
+//
+//        super.actionPerformed(guiButton);
+//    }
 
     @Override
-    public void actionPerformed(Button guiButton) throws IOException {
-        if (guiButton.id == 10) {
-            QuestBookPages.MAIN.getPage().open(true);
-            return;
-        }
-
-        super.actionPerformed(guiButton);
-    }
-
-    @Override
-    public void renderHoveredToolTip(int x, int y) {
+    public void renderTooltip(MatrixStack matrix, int x, int y) {
         if (FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.HoveredToolTip.Pre(this, x, y))) return;
 
-        super.renderHoveredToolTip(x, y);
+        super.renderTooltip(matrix, x, y);
         FrameworkManager.getEventBus().post(new GuiOverlapEvent.InventoryOverlap.HoveredToolTip.Post(this, x, y));
     }
 
     @Override
-    public void renderToolTip(ItemStack stack, int x, int y) {
+    public void renderTooltip(MatrixStack matrix, ItemStack stack, int x, int y) {
         GlStateManager.translate(0, 0, -300d);
-        super.renderToolTip(stack, x, y);
+        super.renderTooltip(matrix, stack, x, y);
     }
 
     @Override
