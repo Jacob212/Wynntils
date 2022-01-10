@@ -5,6 +5,7 @@
 package com.wynntils.modules.chat.managers;
 
 import com.wynntils.McIf;
+import com.wynntils.ModCore;
 import com.wynntils.core.framework.enums.PowderManualChapter;
 import com.wynntils.core.utils.StringUtils;
 import com.wynntils.core.utils.helpers.TextAction;
@@ -33,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+//TODO all the styling needs fixing in this file
 public class ChatManager {
 
     public static DateFormat dateFormat;
@@ -68,23 +70,26 @@ public class ChatManager {
     private static final Pattern duelReg = Pattern.compile("[\\w ]+ \\[Lv\\. \\d+] would like to duel! Type /duel [\\w ]+ to accept\\.");
     private static final Pattern coordinateReg = Pattern.compile("(-?\\d{1,5}[ ,]{1,2})(\\d{1,3}[ ,]{1,2})?(-?\\d{1,5})");
 
-    public static ITextComponent processRealMessage(ITextComponent in) {
+    @SuppressWarnings("unused")
+	public static ITextComponent processRealMessage(ITextComponent in) {
         if (in == null) return in;
         ITextComponent original = in.copy();
 
-        // Reorganizing
-        if (!in.getString().isEmpty()) {
-            ITextComponent newMessage = new StringTextComponent("");
-            for (ITextComponent component : in) {
-                component = component.copy();
-                component.getSiblings().clear();
-                newMessage.getSiblings().add(component);
-            }
-            in = newMessage;
-        }
+        // Reorganizing  //not sure what the purpose of this is but it was breaking the clickable party invites
+//        if (!in.getString().isEmpty()) {
+//            StringTextComponent newMessage = new StringTextComponent("");
+//            for (ITextComponent component : in.getSiblings()) {
+//                component = component.copy();
+//                component.getSiblings().clear();//TODO check if this clears the siblings list
+//                newMessage.append(component);
+//            }
+//            in = newMessage;
+//        }
 
         // language translation
-        if (TranslationConfig.INSTANCE.enableTextTranslation) {
+        //TODO TranslationConfig.INSTANCE.enableTextTranslation is returning null.
+//        if (TranslationConfig.INSTANCE.enableTextTranslation) {
+        if (false) {
             boolean wasTranslated = translateMessage(in);
             if (wasTranslated && !TranslationConfig.INSTANCE.keepOriginal) return null;
         }
@@ -137,7 +142,7 @@ public class ChatManager {
             if (foundEndTimestamp && !McIf.getUnformattedText(in.getSiblings().get(ChatConfig.INSTANCE.addTimestampsToChat ? 3 : 0)).contains("/") && !isGuildOrParty) {
                 foundStart = true;
             }
-            for (ITextComponent component : in) {
+            for (ITextComponent component : in.getSiblings()) {
                 component = component.copy();
                 component.getSiblings().clear();
                 String toAdd = "";
@@ -329,49 +334,49 @@ public class ChatManager {
         }
 
         // clickable party invites
-        if (ChatConfig.INSTANCE.clickablePartyInvites && inviteReg.matcher(McIf.getFormattedText(in)).find()) {
-            for (ITextComponent textComponent : in.getSiblings()) {
-                if (textComponent.getString().startsWith("/")) {
-                    String command = textComponent.getString();
-                    textComponent.getStyle()
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                            .setUnderlined(true)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Join!")));
-                }
-            }
-        }
+//        if (ChatConfig.INSTANCE.clickablePartyInvites && inviteReg.matcher(McIf.getFormattedText(in)).find()) {
+//            for (ITextComponent textComponent : in.getSiblings()) {
+//                if (textComponent.getString().startsWith("/")) {
+//                    String command = textComponent.getString();
+//                    textComponent.getStyle()
+//                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
+//                            .setUnderlined(true)
+//                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Join!")));
+//                }
+//            }
+//        }
 
         // clickable trade messages
-        if (ChatConfig.INSTANCE.clickableTradeMessage && tradeReg.matcher(McIf.getUnformattedText(in)).find()) {
-            for (ITextComponent textComponent : in.getSiblings()) {
-                if (textComponent.getString().startsWith("/")) {
-                    String command = textComponent.getString();
-                    textComponent.getStyle()
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                            .setUnderlined(true)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Trade!")));
-                }
-            }
-        }
+//        if (ChatConfig.INSTANCE.clickableTradeMessage && tradeReg.matcher(McIf.getUnformattedText(in)).find()) {
+//            for (ITextComponent textComponent : in.getSiblings()) {
+//                if (textComponent.getString().startsWith("/")) {
+//                    String command = textComponent.getString();
+//                    textComponent.getStyle()
+//                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
+//                            .setUnderlined(true)
+//                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Trade!")));
+//                }
+//            }
+//        }
 
         // clickable duel messages
-        if (ChatConfig.INSTANCE.clickableDuelMessage && duelReg.matcher(McIf.getUnformattedText(in)).find()) {
-            for (ITextComponent textComponent : in.getSiblings()) {
-                if (textComponent.getString().startsWith("/")) {
-                    String command = textComponent.getString();
-                    textComponent.getStyle()
-                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                            .setUnderlined(true)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Duel!")));
-                }
-            }
-        }
+//        if (ChatConfig.INSTANCE.clickableDuelMessage && duelReg.matcher(McIf.getUnformattedText(in)).find()) {
+//            for (ITextComponent textComponent : in.getSiblings()) {
+//                if (textComponent.getString().startsWith("/")) {
+//                    String command = textComponent.getString();
+//                    textComponent.getStyle()
+//                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
+//                            .setUnderlined(true)
+//                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new StringTextComponent("Duel!")));
+//                }
+//            }
+//        }
 
         // clickable coordinates
         if (ChatConfig.INSTANCE.clickableCoordinates && coordinateReg.matcher(McIf.getUnformattedText(in)).find()) {
 
             ITextComponent temp = new StringTextComponent("");
-            for (ITextComponent texts : in) {
+            for (ITextComponent texts : in.getSiblings()) {
                 Matcher m = coordinateReg.matcher(texts.getString());
                 if (!m.find()) {
                     ITextComponent newComponent = new StringTextComponent(texts.getString());
@@ -494,7 +499,7 @@ public class ChatManager {
 
     public static boolean processUserMention(ITextComponent in, ITextComponent original) {
         if (ChatConfig.INSTANCE.allowChatMentions && in != null && McIf.player() != null) {
-            String match = "\\b(" + McIf.player().getName() + (ChatConfig.INSTANCE.mentionNames.length() > 0 ? "|" + ChatConfig.INSTANCE.mentionNames.replace(",", "|") : "") + ")\\b";
+            String match = "\\b(" + McIf.player().getName().getString() + (ChatConfig.INSTANCE.mentionNames.length() > 0 ? "|" + ChatConfig.INSTANCE.mentionNames.replace(",", "|") : "") + ")\\b";
             Pattern pattern = Pattern.compile(match, Pattern.CASE_INSENSITIVE);
 
             Matcher looseMatcher = pattern.matcher(McIf.getUnformattedText(in));
@@ -508,7 +513,7 @@ public class ChatManager {
 
                 List<ITextComponent> components = new ArrayList<>();
 
-                for (ITextComponent component : in) {
+                for (ITextComponent component : in.getSiblings()) {
                     String text = component.getString();
 
                     if (!foundEndTimestamp) {

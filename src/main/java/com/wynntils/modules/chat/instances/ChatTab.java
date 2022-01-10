@@ -4,9 +4,11 @@
 
 package com.wynntils.modules.chat.instances;
 
-import com.wynntils.McIf;
+import com.google.common.collect.Lists;
 import com.wynntils.core.utils.objects.Pair;
+
 import net.minecraft.client.gui.ChatLine;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+//TODO methods need changing based on the new chat design
 public class ChatTab implements Comparable<ChatTab> {
 
     // stored variables
@@ -29,6 +32,9 @@ public class ChatTab implements Comparable<ChatTab> {
     transient Pair<Integer, Integer> currentXAxis = new Pair<>(0, 0);
     transient boolean hasMentions = false;
     transient boolean hasNewMessages = false;
+    
+    //NEW CODE
+    public final List<ChatLine<IReorderingProcessor>> trimmedMessages = Lists.newArrayList();
 
     // spam filter
     transient ITextComponent lastMessage = null;
@@ -133,8 +139,9 @@ public class ChatTab implements Comparable<ChatTab> {
         hasMentions = true;
     }
 
+    //TODO this isnt working because msg is just the text, no formatting codes are with it. so the regex doesnt work
     public boolean regexMatches(ITextComponent msg) {
-        return regexFinder.matcher(McIf.getFormattedText(msg)).find();
+        return regexFinder.matcher(msg.getString()).find();
     }
 
     public Pair<Integer, Integer> getCurrentXAxis() {
